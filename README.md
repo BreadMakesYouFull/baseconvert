@@ -47,6 +47,14 @@ Uninstall:
     >>> base("4080.5", 10, 16, string=True)
     'FF0.8'
 
+Or from command line
+
+     $ echo 4080.5 | python -m baseconvert -i 10 -o 16
+     FF0.8
+
+     $ python -m baseconvert -n 4080.5 -i 10 -o 16
+     FF0.8
+
 ## Tuple representation
 
 Numbers are represented as a sequence of digits.
@@ -110,7 +118,7 @@ BaseConverter object to False.
     >>> base("0.1", 3, 10, string=True, recurring=False)
     '0.3333333333'
 
-### Max fractional depth.
+### Max fractional depth
 
 Integer parts are always of arbitrary size.
 Fractional depth (number of digits) can must be specified by setting the
