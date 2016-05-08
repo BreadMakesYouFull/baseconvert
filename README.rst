@@ -11,9 +11,9 @@ Convert any rational number, from any (positive integer) base, to any
 -  Input numbers as tuple or string or number.
 -  Output numbers as tuple or string.
 
-The MIT License (MIT) Copyright (c) 2016 Joshua Deakin
+MIT License (MIT) Copyright (c) 2016 Joshua Deakin
 
-www.github.com/squdle/baseconvert
+`github <https://github.com/squdle/baseconvert>`__
 
 contact@joshuadeakin.com
 
@@ -138,7 +138,7 @@ object to False.
     '0.3333333333'
 
 Max fractional depth
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Integer parts are always of arbitrary size. Fractional depth (number of
 digits) can must be specified by setting the max\_depth argument of base

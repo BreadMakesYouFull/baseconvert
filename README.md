@@ -13,10 +13,10 @@ Output numbers as tuple or string.
 - Input numbers as tuple or string or number.
 - Output numbers as tuple or string.
 
-The MIT License (MIT)
+MIT License (MIT)
 Copyright (c) 2016 Joshua Deakin
 
-www.github.com/squdle/baseconvert
+[github](https://github.com/squdle/baseconvert)
 
 contact@joshuadeakin.com
 

@@ -24,19 +24,19 @@ setup(
     license="MIT",
     classifiers=[
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python"
-    "Programming Language :: Python :: 3"
-    "Programming Language :: Python :: 3.0"
-    "Programming Language :: Python :: 3.1"
-    "Programming Language :: Python :: 3.2"
-    "Programming Language :: Python :: 3.3"
-    "Programming Language :: Python :: 3.4"
-    "Programming Language :: Python :: 3.5"
-    "Programming Language :: Python :: 3 :: Only"
-    "Topic :: Education"
-    "Topic :: Scientific/Engineering :: Mathematics"
-    "Intended Audience :: Education"
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.0",
+    "Programming Language :: Python :: 3.1",
+    "Programming Language :: Python :: 3.2",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License"
     ],
     keywords="base bases radix numeral system number hex dec bin hexidecimal\
 binary decimal fraction fractions integer convert",
