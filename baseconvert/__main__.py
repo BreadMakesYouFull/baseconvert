@@ -37,8 +37,10 @@ def main():
         args.output_base = int(args.output_base)
     if (args.number):
         return base(args.number, args.input_base, args.output_base, string=True, max_depth=args.max_depth)
-    else:
+    elif not sys.stdin.isatty():
         return base(sys.stdin.read().strip(), args.input_base, args.output_base, string=True, max_depth=args.max_depth)
+    else:
+        raise ValueError("Please input a number!")
 
 if __name__ == "__main__":
     print(main())
