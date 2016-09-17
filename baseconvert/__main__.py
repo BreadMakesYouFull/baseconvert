@@ -28,7 +28,7 @@ def main():
     parser.add_argument("-d", "--max_depth", default=10, type=int,
                         help="The maximum fractional digits (default 10).")
     parser.add_argument("-r", "--recurring", default=True, type=bool,
-                        help="Boolean, if True will attempt to find recurring decimals (default True).")
+                        help="Boolean, if True will show recurring portion, if found (default True).")
     parser.add_argument("-s", "--string", type=bool,
                         help="Boolean, if True will output number as String, else as tuple (default False).")
     args = parser.parse_args()
