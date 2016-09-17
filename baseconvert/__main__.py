@@ -21,9 +21,9 @@ def main():
     parser = argparse.ArgumentParser(description="Convert rational numbers between bases.")
     parser.add_argument("-n", "--number", default=None,
                         help="The number to convert as a string, else stdin used.")
-    parser.add_argument("-i", "--input-base", default=10,
+    parser.add_argument("-i", "--input-base", default=10, type=int,
                         help="The input base (default 10).")
-    parser.add_argument("-o", "--output-base", default=10,
+    parser.add_argument("-o", "--output-base", default=10, type=int,
                         help="The output base (default 10).")
     parser.add_argument("-d", "--max_depth", default=10, type=int,
                         help="The maximum fractional digits (default 10).")
@@ -33,12 +33,6 @@ def main():
                         help="Boolean, if True will output number as String, else as tuple (default False).")
     args = parser.parse_args()
 
-    args.input_base = float(args.input_base)
-    args.output_base = float(args.output_base)
-    if args.input_base == int(args.input_base):
-        args.input_base = int(args.input_base)
-    if args.output_base == int(args.output_base):
-        args.output_base = int(args.output_base)
     if (args.number):
         return base(args.number, args.input_base, args.output_base, string=args.string, max_depth=args.max_depth, recurring=args.recurring)
     elif not sys.stdin.isatty():
