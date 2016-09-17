@@ -658,9 +658,6 @@ def base(number, input_base=10, output_base=10, max_depth=10,
     # Check that the number is valid for the input base.
     if not check_valid(number, input_base):
         raise ValueError
-    # Deal with base-1 special case
-    if input_base == 1:
-        number = (1,) * number.count(1)
     # Expand any recurring digits.
     number = expand_recurring(number, repeat=5)
     # Convert a fractional number.
