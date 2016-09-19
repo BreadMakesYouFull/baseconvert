@@ -38,6 +38,9 @@ setup(
     "Intended Audience :: Education",
     "License :: OSI Approved :: MIT License"
     ],
+    install_requires = [
+       'justbases>=0.12'
+    ],
     keywords="base bases radix numeral system number hex dec bin hexidecimal\
 binary decimal fraction fractions integer convert",
     packages=find_packages()
