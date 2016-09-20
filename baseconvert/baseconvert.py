@@ -4,12 +4,12 @@
 baseconvert
 ===========
 
-Convert any rational number,
+Convert any non-negative rational number,
 from any base to any base.
 Return result as tuple or string.
 
 - Bases may be any integer at least 2.
-- Converts any rational number.
+- Converts any non-negative rational number.
 - Allows arbitrary (but not unbounded) precision.
 - Value to be converted may be represented in a tuple format or in a string
   format or may be any of the numeric types corresponding to rational numbers.
@@ -275,7 +275,7 @@ def str_digit_to_int(chr):
 
 def int_to_str_digit(n):
     """
-    Converts a positive integer, to a single string character.
+    Converts a non-negative integer, to a single string character.
     Where: 9 -> "9", 10 -> "A", 11 -> "B", 12 -> "C", ...etc
 
     Args:
@@ -302,7 +302,7 @@ def check_valid(number, input_base=10):
     Args:
         number: A tuple in the following form:
             (int, int, int, ... , '.' , int, int, int)
-            (iterable container) containing positive integers of the input base
+            (iterable container) containing non-negative integers of the input base
         input_base(int): The base of the input number.
 
     Returns:
@@ -313,6 +313,8 @@ def check_valid(number, input_base=10):
         True
         >>> check_valid((8,1,15,9), 15)
         False
+        >>> check_valid((8,0,15,9), 16)
+        True
         >>> check_valid((), 2)
         True
         >>> check_valid(('[', ']'), 2)
@@ -450,6 +452,8 @@ def base(number, input_base=10, output_base=10, max_depth=10,
         (0, '.', 1)
     """
     if isinstance(number, Number):
+        if number < 0:
+            raise ValueError
         (radix, relation) = Radices.from_rational(
            Fraction(number),
            output_base,
