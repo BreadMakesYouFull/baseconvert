@@ -115,7 +115,7 @@ Max fractional depth:
 
 
 # Greatest common denominator is used when converting fractions.
-from fractions import gcd
+from math import gcd
 
 
 class BaseConverter:
