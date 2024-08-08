@@ -115,7 +115,16 @@ Max fractional depth:
 
 
 # Greatest common denominator is used when converting fractions.
-from fractions import gcd
+import sys
+
+
+major = str(sys.version_info[0])
+minor = str(sys.version_info[1])
+python_version = float(major + "." + minor)
+if python_version >= 3.9:
+    from math import gcd
+else:
+    from fractions import gcd
 
 
 class BaseConverter:
