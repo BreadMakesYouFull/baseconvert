@@ -111,6 +111,11 @@ Max fractional depth:
     (0, '.', 1, 4, 6, 3, 1, 4, 6, 3, 1, 4)
     >>> base("0.2", 10, 8, max_depth=1)
     (0, '.', 1)
+
+    >>> base("0.3", 10, 2, string=True, max_depth=12)
+    '0.0100110011'
+    >>> base("0.3", 10, 2, string=True, max_depth=13)
+    '0.0100110011001'
 """
 
 
