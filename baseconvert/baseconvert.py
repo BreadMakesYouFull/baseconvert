@@ -118,10 +118,12 @@ Max fractional depth:
 import sys
 
 
-major = str(sys.version_info[0])
-minor = str(sys.version_info[1])
-python_version = float(major + "." + minor)
-if python_version >= 3.9:
+__MATH_GCD = (
+    sys.version_info.major >= 3
+    and sys.version_info.minor >= 5
+)
+
+if __MATH_GCD:
     from math import gcd
 else:
     from fractions import gcd
