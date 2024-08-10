@@ -176,17 +176,18 @@ class BaseConverter:
         (4, 2, 5, 4, 7)
     """
     def __init__(self, input_base, output_base, max_depth=10,
-                 string=False, recurring=True):
+                 string=False, recurring=True, padding=0):
         self.input_base = input_base
         self.output_base = output_base
         self.max_depth = max_depth
         self.string = string
         self.recurring = recurring
+        self.padding = padding
 
     def __call__(self, number):
         """Convert a number."""
         return base(number, self.input_base, self.output_base,
-                    self.max_depth, self.string, self.recurring)
+                    self.max_depth, self.string, self.recurring, self.padding)
 
 
 def represent_as_tuple(string):
@@ -222,6 +223,59 @@ def represent_as_string(iterable):
     keep = (".", "[", "]")
     return "".join(tuple(int_to_str_digit(i) if i not in keep
                    else i for i in iterable))
+
+
+def pad(iterable, n):
+    """
+    Pad a string / list representation of a number.
+
+    Relative to the radix point: "."
+
+    Args:
+        string (str): string representation of a number to pad.
+        n (int): number of '0' to pad by.
+
+    Returns:
+        iterable: padded number
+
+    Examples:
+        >>> pad('A', 1)
+        'A'
+        >>> pad('A', 2)
+        '0A'
+        >>> pad('A0.1', 2)
+        'A0.1'
+        >>> pad('A', 16)
+        '000000000000000A'
+        >>> pad('A.01', 1)
+        'A.01'
+        >>> pad('A.01', 2)
+        '0A.01'
+        >>> pad('A.01', 16)
+        '000000000000000A.01'
+        >>> pad(['A'], 1)
+        ('A',)
+        >>> pad(['A'], 2)
+        ('0', 'A')
+        >>> pad(['A',  '.', '0', '1'], 2)
+        ('0', 'A', '.', '0', '1')
+        >>> pad(['A',  '0', '.', '0', '1'], 2)
+        ('A', '0', '.', '0', '1')
+        >>> pad(['A',  '0', '.', '0', '1'], 4)
+        ('0', '0', 'A', '0', '.', '0', '1')
+    """
+    if isinstance(iterable, str):
+        return (n - len(iterable.split(".")[0])) * '0' + iterable
+    else:
+        return tuple(
+            (
+                n - len(
+                    iterable[0:iterable.index(".")]
+                    if iterable.count(".")
+                    else iterable
+                )
+            ) * ["0",] + list(iterable)
+        )
 
 
 def digit(decimal, digit, input_base=10):
@@ -397,7 +451,7 @@ def integer_base(number, input_base=10, output_base=10):
 
 
 def fractional_base(fractional_part, input_base=10, output_base=10,
-                    max_depth=100):
+                    max_depth=10):
     """
     Convert the fractional part of a number from any base to any base.
 
@@ -423,7 +477,7 @@ def fractional_base(fractional_part, input_base=10, output_base=10,
     denominator = input_base ** fractional_digits
     i = 1
     digits = []
-    while(i < max_depth + 1):
+    while(i < max_depth + 1 or max_depth == 0):
         numerator *= output_base ** i
         digit = numerator // denominator
         numerator -= digit * denominator
@@ -634,7 +688,7 @@ def check_valid(number, input_base=10):
 
 
 def base(number, input_base=10, output_base=10, max_depth=10,
-         string=False, recurring=True):
+         string=False, recurring=True, padding=0):
     """
     Converts a number from any base to any another.
 
@@ -688,11 +742,11 @@ def base(number, input_base=10, output_base=10, max_depth=10,
     else:
         number = integer_base(number, input_base, output_base)
     if recurring:
-        number = find_recurring(number, min_repeat=2)
+        number = find_recurring(number)
     # Return the converted number as a srring or tuple.
-    return represent_as_string(number) if string else number
+    return pad(represent_as_string(number) if string else number, padding)
 
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod(verbose=True)
+    doctest.testmod(verbose=False)
