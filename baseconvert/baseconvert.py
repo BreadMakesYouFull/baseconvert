@@ -134,6 +134,9 @@ else:
     from fractions import gcd
 
 
+MAX_DEPTH = 2048
+
+
 class BaseConverter:
     """
     Converts numbers from any base to any other base.
@@ -181,13 +184,16 @@ class BaseConverter:
         (4, 2, 5, 4, 7)
     """
     def __init__(self, input_base, output_base, max_depth=10,
-                 string=False, recurring=True, padding=0):
+                 string=False, recurring=True, padding=0,
+                 exact=True):
         self.input_base = input_base
         self.output_base = output_base
         self.max_depth = max_depth
         self.string = string
         self.recurring = recurring
         self.padding = padding
+        if exact:
+            self.max_depth = 0
 
     def __call__(self, number):
         """Convert a number."""
@@ -482,9 +488,16 @@ def fractional_base(fractional_part, input_base=10, output_base=10,
     denominator = input_base ** fractional_digits
     i = 1
     digits = []
-    while(i < max_depth + 1 or max_depth == 0):
+    visited = []
+    while(i < max_depth + 1 or (max_depth == 0 and i < MAX_DEPTH)):
         numerator *= output_base ** i
         digit = numerator // denominator
+        remainder = numerator % denominator
+        if (digit, remainder) in visited:
+            # https://github.com/squdle/baseconvert/issues/3
+            # https://en.wikipedia.org/wiki/Repeating_decimal#Every_rational_number_is_either_a_terminating_or_repeating_decimal
+            break
+        visited.append((digit, remainder))
         numerator -= digit * denominator
         denominator *= output_base ** i
         digits.append(digit)
@@ -693,7 +706,7 @@ def check_valid(number, input_base=10):
 
 
 def base(number, input_base=10, output_base=10, max_depth=10,
-         string=False, recurring=True, padding=0):
+         string=False, recurring=True, padding=0, exact=True):
     """
     Converts a number from any base to any another.
 
@@ -720,6 +733,8 @@ def base(number, input_base=10, output_base=10, max_depth=10,
         >>> base((1,9,6,'.',5,1,6), 17, 20)
         (1, 2, 8, '.', 5, 19, 10, 7, 17, 2, 13, 13, 1, 8)
     """
+    if exact:
+        max_depth = 0
     # Convert number to tuple representation.
     if type(number) == int or type(number) == float:
         number = str(number)
