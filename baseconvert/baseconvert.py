@@ -98,7 +98,7 @@ Recurring digits:
 
     >>> base("0.1", 3, 10, string=True)
     '0.[3]'
-    >>> base("0.1", 3, 10, string=True, recurring=False)
+    >>> base("0.1", 3, 10, string=True, max_depth=10, recurring=False)
     '0.3333333333'
 
 Max fractional depth:
@@ -116,6 +116,41 @@ Max fractional depth:
     '0.0100110011'
     >>> base("0.3", 10, 2, string=True, max_depth=13)
     '0.0100110011001'
+
+Exact result:
+    Given that we only deal with rational numbers, it should always be possible to get an exact result.
+    Fractions will either be recurring, or terminate at '0000...'
+
+    WARNING! This library still uses a hueristic for the "exact" calculation.
+    However it should be accurate enough for most usage:
+    
+    >>> base("0.3", 10, 2, string=True, max_depth=1000)
+    '0.0[1001]'
+    >>> base("0.3", 10, 2, string=True, exact=True)
+    '0.0[1001]'
+    >>> base('0.5', 10, 16, string=True, exact=True)
+    '0.8'
+    >>> base('0.[3]', 10, 16, string=True, exact=True)
+    '0.[5]'
+    >>> base('0.25', 10, 16, string=True, exact=True)
+    '0.4'
+    >>> base('0.2', 10, 16, string=True, exact=True)
+    '0.[3]'
+    >>> base('0.1[6]', 10, 16, string=True, exact=True)
+    '0.2[A]'
+    >>> base('0.[142857]', 10, 16, string=True, exact=True)
+    '0.[249]'
+    >>> base('0.125', 10, 16, string=True, exact=True)
+    '0.2'
+    >>> base('0.[1]', 10, 16, string=True, exact=True)
+    '0.[1C7]'
+    >>> base('0.1', 10, 16, string=True, exact=True)
+    '0.1[9]'
+    >>> base('0.[09]', 10, 16, string=True, exact=True)
+    '0.[1745D]'
+    >>> base('0.[0434782608695652173913]', 10, 16, string=True, exact=True)
+    '0.[0B21642C859]'
+
 """
 
 
@@ -134,7 +169,7 @@ else:
     from fractions import gcd
 
 
-MAX_DEPTH = 2048
+MAX_DEPTH = 128
 
 
 class BaseConverter:
@@ -185,7 +220,7 @@ class BaseConverter:
     """
     def __init__(self, input_base, output_base, max_depth=10,
                  string=False, recurring=True, padding=0,
-                 exact=True):
+                 exact=False):
         self.input_base = input_base
         self.output_base = output_base
         self.max_depth = max_depth
@@ -493,10 +528,6 @@ def fractional_base(fractional_part, input_base=10, output_base=10,
         numerator *= output_base ** i
         digit = numerator // denominator
         remainder = numerator % denominator
-        if (digit, remainder) in visited:
-            # https://github.com/squdle/baseconvert/issues/3
-            # https://en.wikipedia.org/wiki/Repeating_decimal#Every_rational_number_is_either_a_terminating_or_repeating_decimal
-            break
         visited.append((digit, remainder))
         numerator -= digit * denominator
         denominator *= output_base ** i
@@ -642,13 +673,17 @@ def find_recurring(number, min_repeat=5):
     number = integer_part + fractional_part[:-(best + best_period)]
     # Ensure we are at the start of the pattern.
     pattern_temp = pattern
-    for i, digit in enumerate(pattern):
-        if number[-1] == digit:
-                number = number[:-1]
-                pattern_temp = pattern_temp[1:] + (pattern_temp[0],)
+    number_temp = number
+    while 1:
+        if number_temp[-1] == pattern_temp[0]:
+            number_temp = number_temp[:-1]
+            pattern_temp = pattern_temp[1:] + (pattern_temp[0],)
+        else:
+            break
     pattern = pattern_temp
     # Return the number with the recurring pattern enclosed with '[' and ']'.
-    return number + ("[",) + pattern[::-1] + ("]",)
+    result = number_temp + ("[",) + pattern[::-1] + ("]",)
+    return result
 
 
 def expand_recurring(number, repeat=5):
@@ -706,7 +741,7 @@ def check_valid(number, input_base=10):
 
 
 def base(number, input_base=10, output_base=10, max_depth=10,
-         string=False, recurring=True, padding=0, exact=True):
+         string=False, recurring=True, padding=0, exact=False):
     """
     Converts a number from any base to any another.
 
@@ -747,7 +782,7 @@ def base(number, input_base=10, output_base=10, max_depth=10,
     if input_base == 1:
         number = (1,) * number.count(1)
     # Expand any recurring digits.
-    number = expand_recurring(number, repeat=5)
+    number = expand_recurring(number, repeat=MAX_DEPTH*2)
     # Convert a fractional number.
     if "." in number:
         radix_point = number.index(".")
