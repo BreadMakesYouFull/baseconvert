@@ -11,9 +11,10 @@ Convert any rational number, from any (positive integer) base, to any
 -  Input numbers as tuple or string or number.
 -  Output numbers as tuple or string.
 
+MIT License (MIT) Copyright (c) 2016 BreadMakesYouFull
 MIT License (MIT) Copyright (c) 2016 squdle
 
-`github <https://github.com/squdle/baseconvert>`__
+`github <https://github.com/BreadMakesYouFull/baseconvert>`__
 
 Requires
 --------

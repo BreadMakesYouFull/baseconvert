@@ -24,3 +24,4 @@ pip-delete-this-directory.txt
 
 # venv
 env/
+venv/*

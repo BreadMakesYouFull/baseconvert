@@ -18,8 +18,9 @@ Output numbers as tuple or string.
 
 The MIT License (MIT)
 Copyright (c) 2016 squdle
+Copyright (c) 2023 BreadMakesYouFull
 
-www.github.com/squdle/baseconvert
+www.github.com/BreadMakesYouFull/baseconvert
 
 Requires Python 3.
 

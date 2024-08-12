@@ -1,9 +1,40 @@
 baseconvert
 ===========
 
-Convert any rational number,
-from any (positive integer) base,
-to any (positive integer) base.
+Convert rational numbers between bases.
+
+![](./preview.gif)
+
+[https://github.com/BreadMakesYouFull/baseconvert](https://github.com/BreadMakesYouFull/baseconvert)
+
+## Install
+
+Requires:
+* python 3
+* pyside6 for GUI
+
+```
+# Install from pypi via pip
+pip install baseconvert
+
+# ...or install from source
+git clone https://github.com/BreadMakesYouFull/baseconvert
+python -m venv venv
+# (pyside6 can be removed from setup.py if needed)
+./venv/bin/pip install .
+
+```
+
+## Run UI
+
+```
+baseconvert
+```
+
+## Python Library
+
+Convert any rational number, from any positive integer base, to any positive integer base.
+
 Output numbers as tuple or string.
 
 - Any rational number
@@ -13,37 +44,17 @@ Output numbers as tuple or string.
 - Input numbers as tuple or string or number.
 - Output numbers as tuple or string.
 
-MIT License (MIT)
-Copyright (c) 2016 squdle
+```
+# base(number, input_base, output_base)
+>>> base((15, 15, 0, ".", 8), 16, 10)
+(4, 0, 8, 0, '.', 5)
 
-[github](https://github.com/squdle/baseconvert)
+>>> base("FF0.8", 16, 10, string=True)
+'4080.5'
 
-## Requires
-
-- Python 3
-
-## Install / Uninstall
-
-Install:
-
-    pip install baseconvert
-
-Uninstall:
-
-    pip uninstall baseconvert
-
-## Quickstart
-
-    # base(number, input_base, output_base)
-
-    >>> base((15, 15, 0, ".", 8), 16, 10)
-    (4, 0, 8, 0, '.', 5)
-
-    >>> base("FF0.8", 16, 10, string=True)
-    '4080.5'
-
-    >>> base("4080.5", 10, 16, string=True)
-    'FF0.8'
+>>> base("4080.5", 10, 16, string=True)
+'FF0.8'
+```
 
 Or from command line
 
@@ -53,7 +64,7 @@ Or from command line
      $ python -m baseconvert -n 4080.5 -i 10 -o 16
      FF0.8
 
-## Tuple representation
+### Tuple representation
 
 Numbers are represented as a sequence of digits.
 Each digit is a base-10 integer value.
@@ -63,7 +74,7 @@ is denoted by a string period.
      (int, int, int, ... , '.', ... , int, int, int)
      (   integer part    , '.',  fractional part   )
 
-## String representation
+### String representation
 
 String digits (after z the values are in ascending Unicode):
 
@@ -72,13 +83,13 @@ String digits (after z the values are in ascending Unicode):
     |  Value  | Representation |
     |---------|----------------|
     |  0 -  9 |    0  -  9     |
-    | 10 - 53 |    A  -  Z     |
+    | 10 - 35 |    A  -  Z     |
     | 36 - 61 |    a  -  z     |
     | 62 +    | unicode 123 +  |
 
-    For bases higher than 61 it's recommended to use tuple representation.
+    For higher bases it's recommended to use tuple representation.
 
-## Examples
+### Examples
 
     # base(number, input_base, output_base)
     >>> n = (15,15,".",0,8)
@@ -126,3 +137,9 @@ max_depth argument of base or a BaseConverter object (default 10).
     (0, '.', 1, 4, 6, 3, 1, 4, 6, 3, 1, 4)
     >>> base("0.2", 10, 8, max_depth=1)
     (0, '.', 1)
+
+### Exact...ish
+
+You can also set ``max_depth=0`` or use the flag ``exact=True``, which are equivalent. These "Exact" results will be only precise only up to the value of ``baseconvert.baseconvert.MAX_DEPTH`` which you may also override, but is limited by default for speed.
+
+This is only relevant for fractional numbers, integer values should always be accurate.

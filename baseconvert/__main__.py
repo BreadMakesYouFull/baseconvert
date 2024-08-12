@@ -44,7 +44,8 @@ def main():
     elif not sys.stdin.isatty():
         return base(sys.stdin.read().strip(), args.input_base, args.output_base, string=args.string, max_depth=args.max_depth, recurring=args.recurring)
     else:
-        raise ValueError("Please input a number!")
+        from .gui import main
+        main()
 
 if __name__ == "__main__":
     print(main())
