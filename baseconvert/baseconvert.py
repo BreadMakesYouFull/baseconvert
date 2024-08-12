@@ -17,11 +17,9 @@ Output numbers as tuple or string.
 - Output numbers as tuple or string.
 
 The MIT License (MIT)
-Copyright (c) 2016 Joshua Deakin
+Copyright (c) 2016 squdle
 
 www.github.com/squdle/baseconvert
-
-contact@joshuadeakin.com
 
 Requires Python 3.
 

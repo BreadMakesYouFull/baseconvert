@@ -19,8 +19,7 @@ setup(
     description="Convert numbers between bases.",
     long_description=long_description,
     url="https://github.com/squdle/baseconvert.git",
-    author="Joshua Deakin",
-    author_email="contact@joshuadeakin.com",
+    author="squdle",
     license="MIT",
     classifiers=[
     "Development Status :: 3 - Alpha",
