@@ -23,4 +23,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/BreadMakesYouFull/baseconvert.git
-        branch: main
+        tag: 2.0.0-flatpak
+        commit: c97bfc2f055df43946ffd69671b3e4c39b4d7f0c
