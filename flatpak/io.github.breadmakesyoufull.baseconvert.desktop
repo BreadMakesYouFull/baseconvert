@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=baseconvert
+Comment=Convert rational numbers between bases
+Categories=Utility;Calculator;
+Icon=io.github.breadmakesyoufull.baseconvert
+Exec=baseconvert
+Terminal=false

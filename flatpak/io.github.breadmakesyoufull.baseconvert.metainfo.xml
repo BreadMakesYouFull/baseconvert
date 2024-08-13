@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.breadmakesyoufull.baseconvert</id>
+  <name>baseconvert</name>
+  <summary>Convert rational numbers between bases</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <developer_name>BreadMakesYouFull</developer_name>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <description>
+    <p>
+      Convert rational numbers between bases
+    </p>
+    <p>
+      Limited support for fractional numbers.
+      Supports bases 2 to 36.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.breadmakesyoufull.baseconvert.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/BreadMakesYouFull/baseconvert/main/preview.gif</image>
+    </screenshot>
+  </screenshots>
+</component>
+<!-- https://www.freedesktop.org/software/appstream/metainfocreator/#/guiapp -->
