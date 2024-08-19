@@ -15,12 +15,17 @@ Requires:
 
 ```
 # Install from pypi via pip
+# Without GUI:
 pip install baseconvert
+# With GUI:
+pip install baseconvert[gui]
 
 # ...or install from source
 git clone https://github.com/BreadMakesYouFull/baseconvert
 python -m venv venv
-# (pyside6 can be removed from setup.py if needed)
+# With GUI
+./venv/bin/pip install .[gui]
+# Without GUI
 ./venv/bin/pip install .
 
 ```

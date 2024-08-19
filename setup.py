@@ -33,9 +33,9 @@ setup(
     keywords="base bases radix numeral system number hex dec bin hexidecimal\
 binary decimal fraction fractions integer convert gui",
     packages=find_packages(),
-    install_requires = [
-        'pyside6',
-    ],
+    extras_require = {
+        'gui':  ["pyside6"]
+    },
     package_data={
         "": ["*.qml"]
     },
