@@ -42,5 +42,18 @@
     <color type="primary" scheme_preference="light">#46a1ff</color>
     <color type="primary" scheme_preference="dark">#1c274d</color>
   </branding>
+  <releases>
+    <release version="2.0.3" date="2024-08-23">
+      <description>
+	<p>Updated support for linux dark/light modes</p>
+	<p>Better dynamic font sizes</p>
+      </description>
+    </release>
+    <release version="2.0.0" date="2024-08-13">
+      <description>
+        <p>Initial release</p>
+      </description>
+    </release>
+  </releases>
 </component>
 <!-- https://www.freedesktop.org/software/appstream/metainfocreator/#/guiapp -->
