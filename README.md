@@ -7,6 +7,10 @@ Convert rational numbers between bases.
 
 [https://github.com/BreadMakesYouFull/baseconvert](https://github.com/BreadMakesYouFull/baseconvert)
 
+<a href='https://flathub.org/apps/io.github.breadmakesyoufull.baseconvert'>
+  <img width='128' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
+</a>
+
 ## Install
 
 Requires:

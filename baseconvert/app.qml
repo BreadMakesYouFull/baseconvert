@@ -4,16 +4,31 @@ import QtQuick.Layouts
 
 
 ApplicationWindow {
+    id: main
     width: 400
     height: 400
+    minimumWidth: 300
+    minimumHeight: 150
     visible: true
     title: "baseconvert"
     property string result: ""
 
-    font.family: "monospace"
-   property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+    property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+    font: Qt.font({
+                bold: true,
+                underline: false,
+                pixelSize: ((main.height > 300) ? ((main.height > main.width) ? main.width / 30 : main.height / 30) : main.height / 8) * 1.1, // resize relative to parent
+                family: "monospace"
+        })
+    property var fontLarge: Qt.font({
+                bold: true,
+                underline: false,
+                pixelSize: main.font.pixelSize * 1.5,
+                family: "monospace"
+        })
 
     ColumnLayout {
+        id: mainLayout
         anchors.fill: parent
         RowLayout {
             TextField {
@@ -21,22 +36,19 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.columnSpan: 1
                 placeholderText: qsTr("Input")
+                font: main.fontLarge
                 onTextChanged: {
                     input.text = input.text.toUpperCase().replace(/[^A-Z0-9.]/g, '')
                     backend.input_changed(input.text, from.value, to.value);
                 }
                 width: parent.width
-                font.pointSize: 18
                 focus: true
             }
         }
         RowLayout {
             Label {
                 id: from_text
-                text: "```base from : 10```"
-                textFormat: Text.MarkdownText
-                Layout.fillWidth: false
-                Layout.preferredWidth: parent.width / 3
+                text: "from 10"
                 horizontalAlignment: Qt.AlignRight
             }
             Slider {
@@ -49,17 +61,16 @@ ApplicationWindow {
                 stepSize: 1
                 onValueChanged: {
                     backend.input_changed(input.text, from.value, to.value);
-                    from_text.text = "```From base : " + from.value.toString() + "```";
+                    from_text.text = "from " + from.value.toString();
                 }
+                handle.implicitWidth: to_text.height
+                handle.implicitHeight: to_text.height
             }
         }
         RowLayout {
             Label {
                 id: to_text
-                text: "```to base: 36```"
-                textFormat: Text.MarkdownText
-                Layout.fillWidth: false
-                Layout.preferredWidth: parent.width / 3
+                text: "  to 36"
                 horizontalAlignment: Qt.AlignRight
             }
             Slider {
@@ -72,23 +83,25 @@ ApplicationWindow {
                 stepSize: 1
                 onValueChanged: {
                     backend.input_changed(input.text, from.value, to.value);
-                    to_text.text = "```To base : " + to.value.toString() + "```"
+                    to_text.text = "  to " + to.value.toString();
                 }
+                handle.implicitWidth: to_text.height
+                handle.implicitHeight: to_text.height
             }
         }
         ColumnLayout {
-            TextArea {
+            TextField {
                 id: output
                 text: backend.result
                 Layout.fillWidth: true
                 Layout.columnSpan: 1
+                font: main.fontLarge
                 readOnly: true
                 width: parent.width
-                font.pointSize: 18
-                //wrapMode: Text.WrapAnywhere
             }
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: true
             text1: "FLIP"
@@ -97,10 +110,10 @@ ApplicationWindow {
             text4: "< DELETE"
             enable5: false
             enable6: false
-            color1: darkMode ? "#0D47A1" : "#ffffff"
-            color2: darkMode ? "#C8090B" : "#ffffff"
-            color3: darkMode ? "#C8090B" : "#ffffff"
-            color4: darkMode ? "#C63100" : "#ffffff"
+            color1: darkMode ? "#0D47A1" : "#275fb8"
+            color2: darkMode ? "#C8090B" : "#f51618"
+            color3: darkMode ? "#C8090B" : "#f51618"
+            color4: darkMode ? "#C63100" : "#ff6633"
             onButtonPressed: (text) => {
                 if( text == "FLIP"){
                     var base_from = from.value;
@@ -130,6 +143,7 @@ ApplicationWindow {
             }
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: true
             text1: "V"
@@ -144,12 +158,13 @@ ApplicationWindow {
             enable5: (from.value >= 36) ? true : false
             enable6: true
             text6: "."
-            color6: darkMode ? "#0D47A1" : "#ffffff"
+            color6: darkMode ? "#006064" : "#109ba1"
             onButtonPressed: (text) => {
                 input.text += text
             }
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: (from.value >= 26) ? true : false
             text1: "P"
@@ -167,6 +182,7 @@ ApplicationWindow {
             onButtonPressed: (text) => {input.text += text}
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: (from.value >= 20) ? true : false
             text1: "J"
@@ -184,6 +200,7 @@ ApplicationWindow {
             onButtonPressed: (text) => {input.text += text}
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: (from.value >= 14) ? true : false
             text1: "D"
@@ -201,6 +218,7 @@ ApplicationWindow {
             onButtonPressed: (text) => {input.text += text}
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: (from.value >= 8) ? true : false
             text1: "7"
@@ -218,6 +236,7 @@ ApplicationWindow {
             onButtonPressed: (text) => {input.text += text}
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: (from.value >= 2) ? true : false
             text1: "1"
@@ -235,10 +254,11 @@ ApplicationWindow {
             onButtonPressed: (text) => {input.text += text}
         }
         ButtonRow{
+            visible: (main.height > 300) ? true : false
             Layout.fillWidth: true
             Layout.fillHeight: true
             text1: "0"
-            color1: darkMode ? "#0D47A1" : "#ffffff"
+            color1: darkMode ? "#0D47A1" : "#275fb8"
             onButtonPressed: (text) => {input.text += text}
             enable2: false
             enable3: false
