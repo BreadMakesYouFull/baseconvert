@@ -16,7 +16,7 @@ modules:
   - name: baseconvert
     buildsystem: simple
     build-commands:
-      - install -D flatpak/io.github.breadmakesyoufull.baseconvert.metainfo.xml ${FLATPAK_DEST}/usr/share/metainfo/io.github.breadmakesyoufull.baseconvert.metainfo.xml
+      - install -D flatpak/io.github.breadmakesyoufull.baseconvert.metainfo.xml ${FLATPAK_DEST}/share/metainfo/io.github.breadmakesyoufull.baseconvert.metainfo.xml
       - install -D flatpak/icon.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/io.github.breadmakesyoufull.baseconvert.svg
       - install -D flatpak/io.github.breadmakesyoufull.baseconvert.desktop ${FLATPAK_DEST}/share/applications/io.github.breadmakesyoufull.baseconvert.desktop
       - pip3 install --prefix=/app --no-deps .[gui]
