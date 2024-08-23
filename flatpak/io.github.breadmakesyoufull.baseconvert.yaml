@@ -19,9 +19,9 @@ modules:
       - install -D flatpak/io.github.breadmakesyoufull.baseconvert.metainfo.xml ${FLATPAK_DEST}/usr/share/metainfo/io.github.breadmakesyoufull.baseconvert.metainfo.xml
       - install -D flatpak/icon.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/io.github.breadmakesyoufull.baseconvert.svg
       - install -D flatpak/io.github.breadmakesyoufull.baseconvert.desktop ${FLATPAK_DEST}/share/applications/io.github.breadmakesyoufull.baseconvert.desktop
-      - pip3 install --prefix=/app --no-deps .
+      - pip3 install --prefix=/app --no-deps .[gui]
     sources:
       - type: git
         url: https://github.com/BreadMakesYouFull/baseconvert.git
-        tag: 2.0.0-flatpak
-        commit: c97bfc2f055df43946ffd69671b3e4c39b4d7f0c
+        tag: TAG
+        commit: COMMIT

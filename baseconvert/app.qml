@@ -11,6 +11,7 @@ ApplicationWindow {
     property string result: ""
 
     font.family: "monospace"
+   property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
 
     ColumnLayout {
         anchors.fill: parent
@@ -31,34 +32,37 @@ ApplicationWindow {
         }
         RowLayout {
             Label {
-                text: "```From base  ```"
+                id: from_text
+                text: "```base from : 10```"
                 textFormat: Text.MarkdownText
                 Layout.fillWidth: false
                 Layout.preferredWidth: parent.width / 3
                 horizontalAlignment: Qt.AlignRight
             }
-            SpinBox {
+            Slider {
                 id: from
                 Layout.fillWidth: true
+                Layout.columnSpan: 2
                 from: 2
                 value: 10
                 to: 36
                 stepSize: 1
-                editable: true
                 onValueChanged: {
                     backend.input_changed(input.text, from.value, to.value);
+                    from_text.text = "```From base : " + from.value.toString() + "```";
                 }
             }
         }
         RowLayout {
             Label {
-                text: "```To base  ```"
+                id: to_text
+                text: "```to base: 36```"
                 textFormat: Text.MarkdownText
                 Layout.fillWidth: false
                 Layout.preferredWidth: parent.width / 3
                 horizontalAlignment: Qt.AlignRight
             }
-            SpinBox {
+            Slider {
                 id: to
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
@@ -66,9 +70,9 @@ ApplicationWindow {
                 value: 36
                 to: 36
                 stepSize: 1
-                editable: true
                 onValueChanged: {
                     backend.input_changed(input.text, from.value, to.value);
+                    to_text.text = "```To base : " + to.value.toString() + "```"
                 }
             }
         }
@@ -93,10 +97,10 @@ ApplicationWindow {
             text4: "< DELETE"
             enable5: false
             enable6: false
-            color1: "#0D47A1"
-            color2: "#C8090B"
-            color3: "#C8090B"
-            color4: "#C63100"
+            color1: darkMode ? "#0D47A1" : "#ffffff"
+            color2: darkMode ? "#C8090B" : "#ffffff"
+            color3: darkMode ? "#C8090B" : "#ffffff"
+            color4: darkMode ? "#C63100" : "#ffffff"
             onButtonPressed: (text) => {
                 if( text == "FLIP"){
                     var base_from = from.value;
@@ -140,7 +144,7 @@ ApplicationWindow {
             enable5: (from.value >= 36) ? true : false
             enable6: true
             text6: "."
-            color6: "#006064"
+            color6: darkMode ? "#0D47A1" : "#ffffff"
             onButtonPressed: (text) => {
                 input.text += text
             }
@@ -234,7 +238,7 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
             text1: "0"
-            color1: "#0D47A1"
+            color1: darkMode ? "#0D47A1" : "#ffffff"
             onButtonPressed: (text) => {input.text += text}
             enable2: false
             enable3: false

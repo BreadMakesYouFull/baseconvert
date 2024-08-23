@@ -17,18 +17,19 @@ Item {
    property bool enable5: true
    property bool enable6: true
    signal buttonPressed(text: string)
-   property color color1: "#333333"
-   property color colorText1: "#ffffff"
-   property color color2: "#333333"
-   property color colorText2: "#ffffff"
-   property color color3: "#333333"
-   property color colorText3: "#ffffff"
-   property color color4: "#333333"
-   property color colorText4: "#ffffff"
-   property color color5: "#333333"
-   property color colorText5: "#ffffff"
-   property color color6: "#333333"
-   property color colorText6: "#ffffff"
+   property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+   property color color1: darkMode ? "#333333" : "#ffffff"
+   property color colorText1: darkMode ? "#ffffff" : "#000000"
+   property color color2: darkMode ? "#333333" : "#ffffff"
+   property color colorText2: darkMode ? "#ffffff" : "#000000"
+   property color color3: darkMode ? "#333333" : "#ffffff"
+   property color colorText3: darkMode ? "#ffffff" : "#000000"
+   property color color4: darkMode ? "#333333" : "#ffffff"
+   property color colorText4: darkMode ? "#ffffff" : "#000000"
+   property color color5: darkMode ? "#333333" : "#ffffff"
+   property color colorText5: darkMode ? "#ffffff" : "#000000"
+   property color color6: darkMode ? "#333333" : "#ffffff"
+   property color colorText6: darkMode ? "#ffffff" : "#000000"
    RowLayout {
       anchors.fill: parent
       Button {
