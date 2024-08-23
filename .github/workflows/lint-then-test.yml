@@ -24,7 +24,7 @@ jobs:
         pip install black
     - name: Lint
       run: |
-        black --check
+        black --check baseconvert
     - name: Test with doctest
       run: |
         python baseconvert/baseconvert.py
