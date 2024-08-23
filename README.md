@@ -11,6 +11,10 @@ Convert rational numbers between bases.
   <img width='128' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
 </a>
 
+[![PyPI version](https://badge.fury.io/py/baseconvert.svg)](https://badge.fury.io/py/baseconvert)
+
+
+
 ## Install
 
 Requires:
