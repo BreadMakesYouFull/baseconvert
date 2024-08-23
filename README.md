@@ -9,9 +9,10 @@ Convert rational numbers between bases.
 
 <a href='https://flathub.org/apps/io.github.breadmakesyoufull.baseconvert'>
   <img width='128' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
+  Install for linux via flatpak
 </a>
 
-[![PyPI version](https://badge.fury.io/py/baseconvert.svg)](https://badge.fury.io/py/baseconvert)
+[![PyPI version](https://badge.fury.io/py/baseconvert.svg)](https://badge.fury.io/py/baseconvert) [![](https://github.com/breadmakesyoufull/baseconvert/actions/workflows/lint-then-test.yml/badge.svg)](https://github.com/BreadMakesYouFull/baseconvert/actions/workflows/lint-then-test.yml)
 
 
 
