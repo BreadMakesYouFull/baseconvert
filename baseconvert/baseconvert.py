@@ -157,10 +157,7 @@ Exact result:
 import sys
 
 
-__MATH_GCD = (
-    sys.version_info.major >= 3
-    and sys.version_info.minor >= 5
-)
+__MATH_GCD = sys.version_info.major >= 3 and sys.version_info.minor >= 5
 
 if __MATH_GCD:
     from math import gcd
@@ -217,9 +214,17 @@ class BaseConverter:
         >>> b((4,5,6,7))
         (4, 2, 5, 4, 7)
     """
-    def __init__(self, input_base, output_base, max_depth=10,
-                 string=False, recurring=True, padding=0,
-                 exact=False):
+
+    def __init__(
+        self,
+        input_base,
+        output_base,
+        max_depth=10,
+        string=False,
+        recurring=True,
+        padding=0,
+        exact=False,
+    ):
         self.input_base = input_base
         self.output_base = output_base
         self.max_depth = max_depth
@@ -231,8 +236,15 @@ class BaseConverter:
 
     def __call__(self, number):
         """Convert a number."""
-        return base(number, self.input_base, self.output_base,
-                    self.max_depth, self.string, self.recurring, self.padding)
+        return base(
+            number,
+            self.input_base,
+            self.output_base,
+            self.max_depth,
+            self.string,
+            self.recurring,
+            self.padding,
+        )
 
 
 def represent_as_tuple(string):
@@ -266,8 +278,7 @@ def represent_as_string(iterable):
     '868.0F'
     """
     keep = (".", "[", "]")
-    return "".join(tuple(int_to_str_digit(i) if i not in keep
-                   else i for i in iterable))
+    return "".join(tuple(int_to_str_digit(i) if i not in keep else i for i in iterable))
 
 
 def pad(iterable, n):
@@ -310,16 +321,21 @@ def pad(iterable, n):
         ('0', '0', 'A', '0', '.', '0', '1')
     """
     if isinstance(iterable, str):
-        return (n - len(iterable.split(".")[0])) * '0' + iterable
+        return (n - len(iterable.split(".")[0])) * "0" + iterable
     else:
         return tuple(
             (
-                n - len(
-                    iterable[0:iterable.index(".")]
+                n
+                - len(
+                    iterable[0 : iterable.index(".")]
                     if iterable.count(".")
                     else iterable
                 )
-            ) * ["0",] + list(iterable)
+            )
+            * [
+                "0",
+            ]
+            + list(iterable)
         )
 
 
@@ -354,7 +370,7 @@ def digit(decimal, digit, input_base=10):
     if decimal == 0:
         return 0
     if digit != 0:
-        return (decimal // (input_base ** digit)) % input_base
+        return (decimal // (input_base**digit)) % input_base
     else:
         return decimal % input_base
 
@@ -390,7 +406,7 @@ def digits(number, base=10):
         return 0
     digits = 0
     n = 1
-    while(number >= 1):
+    while number >= 1:
         number //= base
         digits += 1
     return digits
@@ -414,7 +430,7 @@ def integer_fractional_parts(number):
     radix_point = number.index(".")
     integer_part = number[:radix_point]
     fractional_part = number[radix_point:]
-    return(integer_part, fractional_part)
+    return (integer_part, fractional_part)
 
 
 def from_base_10_int(decimal, output_base=10):
@@ -462,7 +478,7 @@ def to_base_10_int(n, input_base):
         >>> to_base_10_int((8,1), 16)
         129
     """
-    return sum(c * input_base ** i for i, c in enumerate(n[::-1]))
+    return sum(c * input_base**i for i, c in enumerate(n[::-1]))
 
 
 def integer_base(number, input_base=10, output_base=10):
@@ -495,8 +511,7 @@ def integer_base(number, input_base=10, output_base=10):
     return from_base_10_int(to_base_10_int(number, input_base), output_base)
 
 
-def fractional_base(fractional_part, input_base=10, output_base=10,
-                    max_depth=10):
+def fractional_base(fractional_part, input_base=10, output_base=10, max_depth=10):
     """
     Convert the fractional part of a number from any base to any base.
 
@@ -519,17 +534,17 @@ def fractional_base(fractional_part, input_base=10, output_base=10,
     numerator = 0
     for i, value in enumerate(fractional_part, 1):
         numerator += value * input_base ** (fractional_digits - i)
-    denominator = input_base ** fractional_digits
+    denominator = input_base**fractional_digits
     i = 1
     digits = []
     visited = []
-    while(i < max_depth + 1 or (max_depth == 0 and i < MAX_DEPTH)):
-        numerator *= output_base ** i
+    while i < max_depth + 1 or (max_depth == 0 and i < MAX_DEPTH):
+        numerator *= output_base**i
         digit = numerator // denominator
         remainder = numerator % denominator
         visited.append((digit, remainder))
         numerator -= digit * denominator
-        denominator *= output_base ** i
+        denominator *= output_base**i
         digits.append(digit)
         i += 1
         greatest_common_divisor = gcd(numerator, denominator)
@@ -643,13 +658,13 @@ def find_recurring(number, min_repeat=5):
     best_period = 0
     best_repeat = 0
     # Find recurring pattern.
-    while (period < len(sequence)):
+    while period < len(sequence):
         period += 1
         pattern = sequence[:period]
         repeat = 0
         digit = period
         pattern_match = True
-        while(pattern_match and digit < len(sequence)):
+        while pattern_match and digit < len(sequence):
             for i, pattern_digit in enumerate(pattern):
                 if sequence[digit + i] != pattern_digit:
                     pattern_match = False
@@ -669,7 +684,7 @@ def find_recurring(number, min_repeat=5):
     # Use the best pattern found.
     pattern = sequence[:best_period]
     # Remove the pattern from our original number.
-    number = integer_part + fractional_part[:-(best + best_period)]
+    number = integer_part + fractional_part[: -(best + best_period)]
     # Ensure we are at the start of the pattern.
     pattern_temp = pattern
     number_temp = number
@@ -703,7 +718,7 @@ def expand_recurring(number, repeat=5):
     """
     if "[" in number:
         pattern_index = number.index("[")
-        pattern = number[pattern_index + 1:-1]
+        pattern = number[pattern_index + 1 : -1]
         number = number[:pattern_index]
         number = number + pattern * (repeat + 1)
     return number
@@ -739,8 +754,16 @@ def check_valid(number, input_base=10):
     return True
 
 
-def base(number, input_base=10, output_base=10, max_depth=10,
-         string=False, recurring=True, padding=0, exact=False):
+def base(
+    number,
+    input_base=10,
+    output_base=10,
+    max_depth=10,
+    string=False,
+    recurring=True,
+    padding=0,
+    exact=False,
+):
     """
     Converts a number from any base to any another.
 
@@ -781,15 +804,16 @@ def base(number, input_base=10, output_base=10, max_depth=10,
     if input_base == 1:
         number = (1,) * number.count(1)
     # Expand any recurring digits.
-    number = expand_recurring(number, repeat=MAX_DEPTH*2)
+    number = expand_recurring(number, repeat=MAX_DEPTH * 2)
     # Convert a fractional number.
     if "." in number:
         radix_point = number.index(".")
         integer_part = number[:radix_point]
         fractional_part = number[radix_point:]
         integer_part = integer_base(integer_part, input_base, output_base)
-        fractional_part = fractional_base(fractional_part, input_base,
-                                          output_base, max_depth)
+        fractional_part = fractional_base(
+            fractional_part, input_base, output_base, max_depth
+        )
         number = integer_part + fractional_part
         number = truncate(number)
     # Convert an integer number.
@@ -803,4 +827,5 @@ def base(number, input_base=10, output_base=10, max_depth=10,
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod(verbose=False)

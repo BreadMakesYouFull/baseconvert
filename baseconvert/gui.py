@@ -8,9 +8,10 @@ from PySide6.QtQml import QQmlApplicationEngine
 
 from .baseconvert import base
 
+
 class Backend(QObject):
 
-    updateResult=Signal()
+    updateResult = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,9 +22,7 @@ class Backend(QObject):
     def input_changed(self, value, base_from, base_to):
         if re.match("^[0-9A-Z]*[.]?[0-9A-Z]*$", value):
             try:
-                self._result = base(
-                    value, base_from, base_to, string=True, exact=True
-                )
+                self._result = base(value, base_from, base_to, string=True, exact=True)
             except:
                 self._result = self._default
         else:
@@ -40,9 +39,7 @@ def main():
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("backend", backend)
-    engine.load(
-        pkg_resources.resource_filename(__name__, 'app.qml')
-    )
+    engine.load(pkg_resources.resource_filename(__name__, "app.qml"))
     if not engine.rootObjects():
         sys.exit(-1)
     exit_code = app.exec()
