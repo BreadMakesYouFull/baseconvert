@@ -2,17 +2,17 @@
 <component type="desktop-application">
   <id>io.github.breadmakesyoufull.baseconvert</id>
   <name>baseconvert</name>
-  <summary>
-    Convert numbers between bases
-  </summary>
+  <summary>Convert numbers between bases</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
   <developer_name>BreadMakesYouFull</developer_name>
+  <url type="homepage">https://github.com/breadmakesyoufull/baseconvert</url>
   <supports>
     <control>pointing</control>
     <control>keyboard</control>
     <control>touch</control>
   </supports>
+  <content_rating type="oars-1.1" />
   <description>
     <p>
       A small simple utility to convert any rational number between binary and base 36.
@@ -29,19 +29,25 @@
       <li>Also available as a python library</li>
     </ul>
   </description>
+
   <launchable type="desktop-id">io.github.breadmakesyoufull.baseconvert.desktop</launchable>
+
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/BreadMakesYouFull/baseconvert/main/preview.png</image>
+      <caption>Convert between base 32 and binary.</caption>
     </screenshot>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/BreadMakesYouFull/baseconvert/main/preview_light.png</image>
+      <caption>Light and dark mode support.</caption>
     </screenshot>
   </screenshots>
+
   <branding>
     <color type="primary" scheme_preference="light">#46a1ff</color>
     <color type="primary" scheme_preference="dark">#1c274d</color>
   </branding>
+
   <releases>
     <release version="2.0.3" date="2024-08-23">
       <description>
@@ -55,5 +61,6 @@
       </description>
     </release>
   </releases>
+
 </component>
 <!-- https://www.freedesktop.org/software/appstream/metainfocreator/#/guiapp -->
