@@ -17,7 +17,8 @@ Item {
    property bool enable5: true
    property bool enable6: true
    signal buttonPressed(text: string)
-   property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+   property bool is_windows: Qt.platform.os == "windows" // Just use light mode on windows for simplicity
+   property bool darkMode: is_windows ? false : (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
    property color color1: darkMode ? "#333333" : "#ffffff"
    property color colorText1: darkMode ? "#ffffff" : "#000000"
    property color color2: darkMode ? "#333333" : "#ffffff"

@@ -12,8 +12,8 @@ ApplicationWindow {
     visible: true
     title: "baseconvert"
     property string result: ""
-
-    property bool darkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+    property bool is_windows: Qt.platform.os == "windows" // Just use light mode on windows for simplicity
+    property bool darkMode: is_windows ? false : (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
     font: Qt.font({
                 bold: true,
                 underline: false,
