@@ -14,27 +14,13 @@ with open(path.join(here, "VERSION.txt"), encoding="utf-8") as f:
     version = f.read().strip()
 
 setup(
-    name="baseconvert",
-    version=version,
+    name="baseconvert-windows",
+    version="windows",
     description="Convert numbers between bases.",
-    long_description=long_description,
-    url="https://github.com/BreadMakesYouFull/baseconvert.git",
-    author="squdle, BreadMakesYouFull",
-    license="MIT",
-    classifiers=[
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Topic :: Education",
-    "Topic :: Scientific/Engineering :: Mathematics",
-    "Intended Audience :: Education",
-    "License :: OSI Approved :: MIT License"
-    ],
-    keywords="base bases radix numeral system number hex dec bin hexidecimal\
-binary decimal fraction fractions integer convert gui",
+    author="BreadMakesYouFull",
     packages=find_packages(),
     extras_require = {
-        'gui':  ["pyside6"]
+        'gui':  ["PyQt6"]
     },
     package_data={
         "": ["*.qml"]
