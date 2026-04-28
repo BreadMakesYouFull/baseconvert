@@ -1,6 +1,9 @@
 from baseconvert.baseconvert import BaseConverter
 from baseconvert.baseconvert import base
 
-import pkg_resources
+from importlib.metadata import version, PackageNotFoundError
 
-__version__ = pkg_resources.require("baseconvert")[0].version
+try:
+    __version__ = version("baseconvert")
+except PackageNotFoundError:
+    __version__ = "unknown"
