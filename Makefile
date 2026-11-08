@@ -33,8 +33,8 @@ format: install-dev ## Format Python source
 lint: install-dev ## Check Python formatting
 	$(VENV_PYTHON) -m black --check baseconvert
 
-test: install-dev ## Run pytest and report core library/CLI coverage
-	$(VENV_PYTHON) -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing tests
+test: install-dev ## Run pytest and require 100% core library/CLI coverage
+	$(VENV_PYTHON) -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing --cov-fail-under=100 tests
 
 check: lint test ## Run lint, tests, and Twine validation of dist/*
 	$(VENV_PYTHON) -m twine check dist/*

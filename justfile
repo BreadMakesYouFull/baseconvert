@@ -40,9 +40,9 @@ format: install-dev
 lint: install-dev
     {{venv_python}} -m black --check baseconvert
 
-# Run pytest and report coverage for the core library and CLI
+# Run pytest and require 100% statement coverage for the core library and CLI
 test: install-dev
-    {{venv_python}} -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing tests
+    {{venv_python}} -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing --cov-fail-under=100 tests
 
 # Run the local checks
 check: lint test
