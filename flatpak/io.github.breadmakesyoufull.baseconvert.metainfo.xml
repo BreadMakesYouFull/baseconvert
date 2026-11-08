@@ -49,6 +49,11 @@
   </branding>
 
   <releases>
+    <release version="2.1.0" date="2026-11-08">
+      <description>
+	<p>UI modernization</p>
+      </description>
+    </release>
     <release version="2.0.3" date="2024-08-23">
       <description>
 	<p>Updated support for linux dark/light modes</p>

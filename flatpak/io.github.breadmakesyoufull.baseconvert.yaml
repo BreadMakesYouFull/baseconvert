@@ -1,9 +1,9 @@
 id: io.github.breadmakesyoufull.baseconvert
 runtime: org.kde.Platform
-runtime-version: '6.7'
+runtime-version: '6.11'
 sdk: org.kde.Sdk
 base: io.qt.PySide.BaseApp
-base-version: '6.7'
+base-version: '6.11'
 command: baseconvert
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
@@ -16,12 +16,11 @@ modules:
   - name: baseconvert
     buildsystem: simple
     build-commands:
-      - install -D flatpak/io.github.breadmakesyoufull.baseconvert.metainfo.xml ${FLATPAK_DEST}/share/metainfo/io.github.breadmakesyoufull.baseconvert.metainfo.xml
-      - install -D flatpak/icon.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/io.github.breadmakesyoufull.baseconvert.svg
-      - install -D flatpak/io.github.breadmakesyoufull.baseconvert.desktop ${FLATPAK_DEST}/share/applications/io.github.breadmakesyoufull.baseconvert.desktop
-      - pip3 install --prefix=/app --no-deps .[gui]
+      - install -Dm644 flatpak/io.github.breadmakesyoufull.baseconvert.metainfo.xml ${FLATPAK_DEST}/share/metainfo/io.github.breadmakesyoufull.baseconvert.metainfo.xml
+      - install -Dm644 flatpak/icon.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/io.github.breadmakesyoufull.baseconvert.svg
+      - install -Dm644 flatpak/io.github.breadmakesyoufull.baseconvert.desktop ${FLATPAK_DEST}/share/applications/io.github.breadmakesyoufull.baseconvert.desktop
+      - pip3 install --prefix=/app --no-deps --no-build-isolation --no-compile '.[gui]'
     sources:
       - type: git
         url: https://github.com/BreadMakesYouFull/baseconvert.git
-        tag: TAG
-        commit: COMMIT
+        branch: main

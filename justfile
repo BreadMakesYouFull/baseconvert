@@ -64,3 +64,31 @@ publish-test: check
 # Build, test, validate, and upload to PyPI; run only when intentionally publishing
 publish: check
     {{venv_python}} -m twine upload dist/*
+
+flatpak_manifest := "flatpak/io.github.breadmakesyoufull.baseconvert.yaml"
+flatpak_dev_manifest := "flatpak/io.github.breadmakesyoufull.baseconvert.dev.yaml"
+flatpak_build_dir := ".flatpak-build"
+app_id := "io.github.breadmakesyoufull.baseconvert"
+
+# Build and install working tree as flatpak
+flatpak-build-dev:
+    flatpak-builder --user --install --force-clean \
+        --install-deps-from=flathub \
+        {{flatpak_build_dir}} {{flatpak_dev_manifest}}
+
+# Build and install main branch as flatpak
+flatpak-build:
+    flatpak-builder \
+        --user \
+        --install \
+        --force-clean \
+        --install-deps-from=flathub \
+        {{flatpak_build_dir}} \
+        {{flatpak_manifest}}
+
+# Launch flatpak
+flatpak-run:
+    flatpak run {{app_id}}
+
+# Build and launch flatpak from current tree
+flatpak-test: flatpak-build-dev flatpak-run
