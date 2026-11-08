@@ -26,14 +26,35 @@ def test_recurring_flags_are_mutually_exclusive():
         main(["-n", "1", "-r", "--no-recurring"])
 
 
-def test_cli_launches_gui_when_stdin_is_tty(monkeypatch):
+def test_cli_launches_gui_with_selected_theme(monkeypatch):
     class TTYInput:
         def isatty(self):
             return True
 
     launched = []
     monkeypatch.setattr(sys, "stdin", TTYInput())
-    monkeypatch.setitem(sys.modules, "baseconvert.gui", SimpleNamespace(main=lambda: launched.append(True)))
+    monkeypatch.setitem(
+        sys.modules,
+        "baseconvert.gui",
+        SimpleNamespace(main=lambda **kwargs: launched.append(kwargs)),
+    )
+
+    assert main(["--theme", "dark"]) is None
+    assert launched == [{"theme": "dark"}]
+
+
+def test_cli_theme_defaults_to_system(monkeypatch):
+    class TTYInput:
+        def isatty(self):
+            return True
+
+    launched = []
+    monkeypatch.setattr(sys, "stdin", TTYInput())
+    monkeypatch.setitem(
+        sys.modules,
+        "baseconvert.gui",
+        SimpleNamespace(main=lambda **kwargs: launched.append(kwargs)),
+    )
 
     assert main([]) is None
-    assert launched == [True]
+    assert launched == [{"theme": "system"}]

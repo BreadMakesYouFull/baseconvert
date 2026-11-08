@@ -17,8 +17,7 @@ Item {
    property bool enable5: true
    property bool enable6: true
    signal buttonPressed(text: string)
-   property bool is_windows: Qt.platform.os == "windows" // Just use light mode on windows for simplicity
-   property bool darkMode: is_windows ? false : (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
+   property bool darkMode: false
    property color color1: darkMode ? "#333333" : "#ffffff"
    property color colorText1: darkMode ? "#ffffff" : "#000000"
    property color color2: darkMode ? "#333333" : "#ffffff"
@@ -34,76 +33,52 @@ Item {
    RowLayout {
       anchors.fill: parent
       Button {
-           id: button1
-           visible: enable1
+           visible: buttonRow.enable1
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text1
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color1
-               buttonText: colorText1
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color1; buttonText: buttonRow.colorText1 }
        }
        Button {
-           id: button2
-           visible: enable2
+           visible: buttonRow.enable2
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text2
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color2
-               buttonText: colorText2
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color2; buttonText: buttonRow.colorText2 }
        }
        Button {
-           id: button3
-           visible: enable3
+           visible: buttonRow.enable3
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text3
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color3
-               buttonText: colorText3
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color3; buttonText: buttonRow.colorText3 }
        }
        Button {
-           id: button4
-           visible: enable4
+           visible: buttonRow.enable4
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text4
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color4
-               buttonText: colorText4
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color4; buttonText: buttonRow.colorText4 }
        }
        Button {
-           id: button5
-           visible: enable5
+           visible: buttonRow.enable5
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text5
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color5
-               buttonText: colorText5
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color5; buttonText: buttonRow.colorText5 }
        }
        Button {
-           id: button6
-           visible: enable6
+           visible: buttonRow.enable6
            Layout.fillWidth: true
            Layout.fillHeight: true
            text: buttonRow.text6
-           onClicked:  buttonPressed(text)
-           palette {
-               button: color6
-               buttonText: colorText6
-           }
+           onClicked: buttonRow.buttonPressed(text)
+           palette { button: buttonRow.color6; buttonText: buttonRow.colorText6 }
        }
    }
 }

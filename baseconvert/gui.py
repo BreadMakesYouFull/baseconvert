@@ -1,8 +1,10 @@
+import argparse
 import re
 import sys
 from importlib.resources import files
+from typing import Sequence
 
-from PySide6.QtCore import QObject, Property, QUrl, Signal, Slot
+from PySide6.QtCore import QObject, Property, QUrl, Signal, Slot, Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -11,9 +13,13 @@ from .baseconvert import base
 
 class Backend(QObject):
     updateResult = Signal()
+    themeChanged = Signal()
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(self, theme: str = "system", parent: QObject | None = None) -> None:
         super().__init__(parent)
+        if theme not in {"system", "light", "dark"}:
+            raise ValueError("theme must be 'system', 'light', or 'dark'")
+        self._theme = theme
         self._default: str = "Output"
         self._result: str = self._default
 
@@ -28,14 +34,48 @@ class Backend(QObject):
             self._result = self._default
         self.updateResult.emit()
 
+    @Property(str, notify=themeChanged)
+    def theme(self) -> str:
+        return self._theme
+
+    @Property(bool, notify=themeChanged)
+    def darkMode(self) -> bool:
+        if self._theme == "dark":
+            return True
+        if self._theme == "light":
+            return False
+        app = QGuiApplication.instance()
+        return bool(
+            app
+            and app.styleHints().colorScheme() == Qt.ColorScheme.Dark
+        )
+
+    @Slot()
+    def toggle_theme(self) -> None:
+        # Toggling from system mode pins the opposite of the currently active mode.
+        self._theme = "light" if self.darkMode else "dark"
+        self.themeChanged.emit()
+
     @Property(str, notify=updateResult)
     def result(self) -> str:
         return self._result
 
 
-def main() -> None:
-    backend = Backend()
+def main(theme: str | None = None, argv: Sequence[str] | None = None) -> None:
+    if theme is None:
+        parser = argparse.ArgumentParser(description="Launch baseconvert GUI.")
+        parser.add_argument(
+            "--theme",
+            choices=("system", "light", "dark"),
+            default="system",
+            help="GUI color theme (default: follow system preference).",
+        )
+        theme = parser.parse_args(argv).theme
+
+    # Do not let the already-parsed --theme option reach Qt's argument parser.
+    sys.argv = [sys.argv[0]]
     app = QGuiApplication(sys.argv)
+    backend = Backend(theme)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("backend", backend)
     qml_path = files(__package__).joinpath("app.qml")

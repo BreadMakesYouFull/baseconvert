@@ -5,6 +5,7 @@ Examples::
     python -m baseconvert -n 0.5 -i 10 -o 20 -s
     echo 3.1415926 | python -m baseconvert -i 10 -o 16 -d 3 -s
     python -m baseconvert -n 0.1 -i 3 -o 10 --no-recurring -s
+    baseconvert --theme dark
 """
 
 import argparse
@@ -36,6 +37,12 @@ def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
         type=int,
         default=10,
         help="Maximum fractional digits (default: 10).",
+    )
+    parser.add_argument(
+        "--theme",
+        choices=("system", "light", "dark"),
+        default="system",
+        help="GUI color theme (default: follow system preference).",
     )
     recurring = parser.add_mutually_exclusive_group()
     recurring.add_argument(
@@ -73,7 +80,7 @@ def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
 
     from .gui import main as gui_main
 
-    gui_main()
+    gui_main(theme=args.theme)
     return None
 
 

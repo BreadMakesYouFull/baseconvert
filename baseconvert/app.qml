@@ -12,20 +12,29 @@ ApplicationWindow {
     visible: true
     title: "baseconvert"
     property string result: ""
-    property bool is_windows: Qt.platform.os == "windows" // Just use light mode on windows for simplicity
-    property bool darkMode: is_windows ? false : (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
+    property bool darkMode: backend.darkMode
+    color: darkMode ? "#121212" : "#f5f5f5"
+    palette.window: color
+    palette.windowText: darkMode ? "#f5f5f5" : "#202020"
+    palette.base: darkMode ? "#1e1e1e" : "#ffffff"
+    palette.alternateBase: darkMode ? "#292929" : "#eeeeee"
+    palette.text: darkMode ? "#f5f5f5" : "#202020"
+    palette.button: darkMode ? "#333333" : "#eeeeee"
+    palette.buttonText: darkMode ? "#ffffff" : "#202020"
+    palette.highlight: darkMode ? "#275fb8" : "#275fb8"
+    palette.highlightedText: "#ffffff"
     font: Qt.font({
-                bold: true,
-                underline: false,
-                pixelSize: ((main.height > 300) ? ((main.height > main.width) ? main.width / 30 : main.height / 30) : main.height / 8) * 1.1, // resize relative to parent
-                family: "monospace"
-        })
+        bold: true,
+        underline: false,
+        pixelSize: ((main.height > 300) ? ((main.height > main.width) ? main.width / 30 : main.height / 30) : main.height / 8) * 1.1,
+        family: "monospace"
+    })
     property var fontLarge: Qt.font({
-                bold: true,
-                underline: false,
-                pixelSize: main.font.pixelSize * 1.5,
-                family: "monospace"
-        })
+        bold: true,
+        underline: false,
+        pixelSize: main.font.pixelSize * 1.5,
+        family: "monospace"
+    })
 
     ColumnLayout {
         id: mainLayout
@@ -41,8 +50,16 @@ ApplicationWindow {
                     input.text = input.text.toUpperCase().replace(/[^A-Z0-9.]/g, '')
                     backend.input_changed(input.text, from.value, to.value);
                 }
-                width: parent.width
                 focus: true
+            }
+            ToolButton {
+                id: themeToggle
+                text: main.darkMode ? "☀" : "☾"
+                font.pixelSize: main.font.pixelSize * 1.4
+                ToolTip.visible: hovered
+                ToolTip.text: main.darkMode ? qsTr("Switch to light mode") : qsTr("Switch to dark mode")
+                Accessible.name: ToolTip.text
+                onClicked: backend.toggle_theme()
             }
         }
         RowLayout {
@@ -97,13 +114,13 @@ ApplicationWindow {
                 Layout.columnSpan: 1
                 font: main.fontLarge
                 readOnly: true
-                width: parent.width
             }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
             Layout.fillHeight: true
+            darkMode: main.darkMode
             text1: "FLIP"
             text2: "RESET"
             text3: "CLEAR"
@@ -115,7 +132,7 @@ ApplicationWindow {
             color3: darkMode ? "#C8090B" : "#f51618"
             color4: darkMode ? "#C63100" : "#ff6633"
             onButtonPressed: (text) => {
-                if( text == "FLIP"){
+                if (text == "FLIP") {
                     var base_from = from.value;
                     var base_to = to.value;
                     var out_text = output.text;
@@ -125,141 +142,146 @@ ApplicationWindow {
                     out_text = out_text.replace(" ", "");
                     to.value = base_from;
                     from.value = base_to;
-                    if (!out_text.includes("Output")){
+                    if (!out_text.includes("Output")) {
                         input.text = out_text;
                     }
                 }
-                if( text == "RESET"){
+                if (text == "RESET") {
                     input.text = "";
                     from.value = 10;
                     to.value = 36;
                 }
-                if( text == "CLEAR"){
+                if (text == "CLEAR") {
                     input.text = "";
                 }
-                if( text == "< DELETE"){
+                if (text == "< DELETE") {
                     input.text = input.text.slice(0, -1);
                 }
             }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
             Layout.fillHeight: true
+            darkMode: main.darkMode
             text1: "V"
             text2: "W"
             text3: "X"
             text4: "Y"
             text5: "Z"
-            enable1: (from.value >= 32) ? true : false
-            enable2: (from.value >= 33) ? true : false
-            enable3: (from.value >= 34) ? true : false
-            enable4: (from.value >= 35) ? true : false
-            enable5: (from.value >= 36) ? true : false
+            enable1: from.value >= 32
+            enable2: from.value >= 33
+            enable3: from.value >= 34
+            enable4: from.value >= 35
+            enable5: from.value >= 36
             enable6: true
             text6: "."
             color6: darkMode ? "#006064" : "#109ba1"
-            onButtonPressed: (text) => {
-                input.text += text
-            }
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
-            Layout.fillHeight: (from.value >= 26) ? true : false
+            Layout.fillHeight: from.value >= 26
+            darkMode: main.darkMode
             text1: "P"
             text2: "Q"
             text3: "R"
             text4: "S"
             text5: "T"
             text6: "U"
-            enable1: (from.value >= 26) ? true : false
-            enable2: (from.value >= 27) ? true : false
-            enable3: (from.value >= 28) ? true : false
-            enable4: (from.value >= 29) ? true : false
-            enable5: (from.value >= 30) ? true : false
-            enable6: (from.value >= 31) ? true : false
-            onButtonPressed: (text) => {input.text += text}
+            enable1: from.value >= 26
+            enable2: from.value >= 27
+            enable3: from.value >= 28
+            enable4: from.value >= 29
+            enable5: from.value >= 30
+            enable6: from.value >= 31
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
-            Layout.fillHeight: (from.value >= 20) ? true : false
+            Layout.fillHeight: from.value >= 20
+            darkMode: main.darkMode
             text1: "J"
             text2: "K"
             text3: "L"
             text4: "M"
             text5: "N"
             text6: "O"
-            enable1: (from.value >= 20) ? true : false
-            enable2: (from.value >= 21) ? true : false
-            enable3: (from.value >= 22) ? true : false
-            enable4: (from.value >= 23) ? true : false
-            enable5: (from.value >= 24) ? true : false
-            enable6: (from.value >= 25) ? true : false
-            onButtonPressed: (text) => {input.text += text}
+            enable1: from.value >= 20
+            enable2: from.value >= 21
+            enable3: from.value >= 22
+            enable4: from.value >= 23
+            enable5: from.value >= 24
+            enable6: from.value >= 25
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
-            Layout.fillHeight: (from.value >= 14) ? true : false
+            Layout.fillHeight: from.value >= 14
+            darkMode: main.darkMode
             text1: "D"
             text2: "E"
             text3: "F"
             text4: "G"
             text5: "H"
             text6: "I"
-            enable1: (from.value >= 14) ? true : false
-            enable2: (from.value >= 15) ? true : false
-            enable3: (from.value >= 16) ? true : false
-            enable4: (from.value >= 17) ? true : false
-            enable5: (from.value >= 18) ? true : false
-            enable6: (from.value >= 19) ? true : false
-            onButtonPressed: (text) => {input.text += text}
+            enable1: from.value >= 14
+            enable2: from.value >= 15
+            enable3: from.value >= 16
+            enable4: from.value >= 17
+            enable5: from.value >= 18
+            enable6: from.value >= 19
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
-            Layout.fillHeight: (from.value >= 8) ? true : false
+            Layout.fillHeight: from.value >= 8
+            darkMode: main.darkMode
             text1: "7"
             text2: "8"
             text3: "9"
             text4: "A"
             text5: "B"
             text6: "C"
-            enable1: (from.value >= 8) ? true : false
-            enable2: (from.value >= 9) ? true : false
-            enable3: (from.value >= 10) ? true : false
-            enable4: (from.value >= 11) ? true : false
-            enable5: (from.value >= 12) ? true : false
-            enable6: (from.value >= 13) ? true : false
-            onButtonPressed: (text) => {input.text += text}
+            enable1: from.value >= 8
+            enable2: from.value >= 9
+            enable3: from.value >= 10
+            enable4: from.value >= 11
+            enable5: from.value >= 12
+            enable6: from.value >= 13
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
-            Layout.fillHeight: (from.value >= 2) ? true : false
+            Layout.fillHeight: from.value >= 2
+            darkMode: main.darkMode
             text1: "1"
             text2: "2"
             text3: "3"
             text4: "4"
             text5: "5"
             text6: "6"
-            enable1: (from.value >= 2) ? true : false
-            enable2: (from.value >= 3) ? true : false
-            enable3: (from.value >= 4) ? true : false
-            enable4: (from.value >= 5) ? true : false
-            enable5: (from.value >= 6) ? true : false
-            enable6: (from.value >= 7) ? true : false
-            onButtonPressed: (text) => {input.text += text}
+            enable1: from.value >= 2
+            enable2: from.value >= 3
+            enable3: from.value >= 4
+            enable4: from.value >= 5
+            enable5: from.value >= 6
+            enable6: from.value >= 7
+            onButtonPressed: (text) => { input.text += text }
         }
-        ButtonRow{
-            visible: (main.height > 300) ? true : false
+        ButtonRow {
+            visible: main.height > 300
             Layout.fillWidth: true
             Layout.fillHeight: true
+            darkMode: main.darkMode
             text1: "0"
             color1: darkMode ? "#0D47A1" : "#275fb8"
-            onButtonPressed: (text) => {input.text += text}
+            onButtonPressed: (text) => { input.text += text }
             enable2: false
             enable3: false
             enable4: false
