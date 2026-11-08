@@ -1,23 +1,21 @@
-from baseconvert import base
+"""Convert a number from the command line, or launch the GUI with no input.
 
+Examples::
 
-import sys
+    python -m baseconvert -n 0.5 -i 10 -o 20 -s
+    echo 3.1415926 | python -m baseconvert -i 10 -o 16 -d 3 -s
+    python -m baseconvert -n 0.1 -i 3 -o 10 --no-recurring -s
+    baseconvert --theme light
+"""
+
 import argparse
+import sys
+from typing import Sequence
+
+from baseconvert import DigitTuple, base
 
 
-def main():
-    """
-    Main entry point for running baseconvert as a command.
-
-    Examples:
-
-        $ python -m baseconvert -n 0.5 -i 10 -o 20 -s True
-        0.A
-
-        $ echo 3.1415926 | python -m baseconvert -i 10 -o 16 -d 3 -s True
-        3.243
-    """
-    # Parse arguments
+def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
     parser = argparse.ArgumentParser(
         description="Convert rational numbers between bases."
     )
@@ -25,65 +23,68 @@ def main():
         "-n",
         "--number",
         default=None,
-        help="The number to convert as a string, else stdin used.",
+        help="The number to convert as a string; otherwise read stdin.",
     )
     parser.add_argument(
-        "-i", "--input-base", default=10, help="The input base (default 10)."
+        "-i", "--input-base", type=int, default=10, help="Input base (default: 10)."
     )
     parser.add_argument(
-        "-o", "--output-base", default=10, help="The output base (default 10)."
+        "-o", "--output-base", type=int, default=10, help="Output base (default: 10)."
     )
     parser.add_argument(
         "-d",
-        "--max_depth",
-        default=10,
+        "--max-depth",
         type=int,
-        help="The maximum fractional digits (default 10).",
+        default=10,
+        help="Maximum fractional digits (default: 10).",
     )
     parser.add_argument(
+        "--theme",
+        choices=("system", "light", "dark"),
+        default="dark",
+        help="GUI color theme (default: dark).",
+    )
+    recurring = parser.add_mutually_exclusive_group()
+    recurring.add_argument(
         "-r",
         "--recurring",
-        default=True,
-        type=bool,
-        help="Boolean, if True will attempt to find recurring decimals (default True).",
+        dest="recurring",
+        action="store_true",
+        help="Mark repeating fractional digits (the default).",
     )
+    recurring.add_argument(
+        "--no-recurring",
+        dest="recurring",
+        action="store_false",
+        help="Do not mark repeating fractional digits.",
+    )
+    parser.set_defaults(recurring=True)
     parser.add_argument(
         "-s",
         "--string",
-        type=bool,
-        help="Boolean, if True will output number as String, else as tuple (default False).",
+        action="store_true",
+        help="Output the number as a string rather than a tuple.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    args.input_base = float(args.input_base)
-    args.output_base = float(args.output_base)
-    if args.input_base == int(args.input_base):
-        args.input_base = int(args.input_base)
-    if args.output_base == int(args.output_base):
-        args.output_base = int(args.output_base)
-    if args.number:
-        return base(
-            args.number,
-            args.input_base,
-            args.output_base,
-            string=args.string,
-            max_depth=args.max_depth,
-            recurring=args.recurring,
-        )
-    elif not sys.stdin.isatty():
-        return base(
-            sys.stdin.read().strip(),
-            args.input_base,
-            args.output_base,
-            string=args.string,
-            max_depth=args.max_depth,
-            recurring=args.recurring,
-        )
-    else:
-        from .gui import main
+    options = {
+        "string": args.string,
+        "max_depth": args.max_depth,
+        "recurring": args.recurring,
+    }
+    if args.number is not None:
+        return base(args.number, args.input_base, args.output_base, **options)
+    if not sys.stdin.isatty():
+        number = sys.stdin.read().strip()
+        return base(number, args.input_base, args.output_base, **options)
 
-        main()
+    from .gui import main as gui_main
+
+    gui_main(theme=args.theme)
+    return None
 
 
 if __name__ == "__main__":
-    print(main())
+    result = main()
+    if result is not None:
+        print(result)
