@@ -4,8 +4,8 @@ import QtQuick.Layouts
 
 ApplicationWindow {
     id: main
-    width: 440
-    height: 700
+    width: 512
+    height: 512
     minimumWidth: 320
     minimumHeight: 360
     visible: true
@@ -23,8 +23,8 @@ ApplicationWindow {
     property color primaryText: darkMode ? "#f1f0df" : "#202925"
     property color secondaryText: darkMode ? "#a9b8ad" : "#536159"
     property color accent: darkMode ? "#65e6ca" : "#087e72"
-    property color lcdColor: darkMode ? "#071512" : "#10201c"
-    property color lcdText: "#70f3d4"
+    property color lcdColor: darkMode ? "#071512" : "#ffffff"
+    property color lcdText: darkMode ? "#70f3d4" : "#168477"
     property color keyColor: darkMode ? "#d8dfd2" : "#f0f0df"
     property color keyText: "#18211e"
     property color keyBorder: darkMode ? "#f5f4e5" : "#ffffff"
@@ -66,14 +66,6 @@ ApplicationWindow {
                     font.pixelSize: main.compact ? 19 : 22
                     font.weight: Font.Black
                     font.letterSpacing: 1.2
-                }
-                Label {
-                    visible: !main.compact
-                    text: qsTr("RADIX CALCULATOR")
-                    color: main.secondaryText
-                    font.family: "Monospace"
-                    font.pixelSize: 10
-                    font.letterSpacing: 1.4
                 }
             }
             Item { Layout.fillWidth: true }
