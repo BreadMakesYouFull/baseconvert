@@ -32,7 +32,7 @@ from baseconvert.baseconvert import (
         ("0.1", 3, 10, "0.[3]"),
         ("0.3", 10, 2, "0.0[1001]"),
         ("-FF.8", 16, 10, "-255.5"),
-        ("+10", 10, 2, "10"),
+        ("+10", 10, 2, "1010"),
     ],
 )
 def test_base_string_conversions(number, input_base, output_base, expected):
@@ -61,7 +61,7 @@ def test_exact_option_matches_unbounded_depth():
 
 
 def test_padding_preserves_sign_and_radix():
-    assert base("-12.5", 10, 10, string=True, padding=4) == "-012.5"
+    assert base("-12.5", 10, 10, string=True, padding=4) == "-0012.5"
     assert base("12", 10, 10, padding=4) == ("0", "0", 1, 2)
 
 
@@ -139,6 +139,19 @@ def test_padding_and_fraction_helpers():
 
 
 def test_recurring_compatibility_helpers():
+    assert find_recurring((1, 2, ".", 1, 2, 1, 2, 1, 2), min_repeat=2) == (
+        1,
+        2,
+        ".",
+        "[",
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        "]",
+    )
     assert find_recurring((1, 2, ".", 1, 2, 3), min_repeat=2) == (
         1,
         2,
