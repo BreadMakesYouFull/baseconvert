@@ -1,160 +1,76 @@
 baseconvert
 ===========
 
-Convert any rational number, from any (positive integer) base, to any
-(positive integer) base. Output numbers as tuple or string.
+Convert rational numbers between positive integer bases, with exact
+arithmetic and recurring fractional digits.
 
--  Any rational number
--  Arbitrary precision
--  Fractions
--  Recurring/repeating fractional digits.
--  Input numbers as tuple or string or number.
--  Output numbers as tuple or string.
+Install
+-------
 
-MIT License (MIT) Copyright (c) 2024 BreadMakesYouFull
-MIT License (MIT) Copyright (c) 2016 squdle
+Install the library from PyPI::
 
-`github <https://github.com/BreadMakesYouFull/baseconvert>`__
+    python -m pip install baseconvert
 
-Requires
---------
+For the GUI, install the optional dependencies and launch the application::
 
--  Python 3
-
-Install / Uninstall
--------------------
-
-Install:
-
-::
-
-    pip install baseconvert
-
-Optionally install GUI frontend and launch:
-
-::
-
-    # Install with pyside6
-    pip install baseconvert[gui]
-    # Run GUI frontend
+    python -m pip install 'baseconvert[gui]'
     baseconvert
 
-Uninstall:
+To run from a source checkout, install `just <https://just.systems/>`_ and
+use the launch recipe. It creates ``.venv``, installs the GUI dependencies,
+and starts the application::
 
-::
+    git clone https://github.com/BreadMakesYouFull/baseconvert.git
+    cd baseconvert
+    just launch
 
-    pip uninstall baseconvert
+Development
+-----------
 
-Quickstart
-----------
+Useful recipes from the repository root::
 
-::
+    just install       # editable install in .venv
+    just install-gui   # editable install with GUI dependencies
+    just check         # lint and run doctests
+    just clean         # remove build artifacts
+    just build         # build sdist and wheel
+    just check-dist    # build and validate distributions
 
-    # base(number, input_base, output_base)
+For a manual release, ``just publish-test`` uploads to TestPyPI and
+``just publish`` uploads to PyPI. Review and test the distributions before
+publishing a release.
 
-    >>> base((15, 15, 0, ".", 8), 16, 10)
-    (4, 0, 8, 0, '.', 5)
+Python library
+--------------
 
-    >>> base("FF0.8", 16, 10, string=True)
-    '4080.5'
+The API accepts strings, digit tuples, integers, floats, and
+``fractions.Fraction`` values. Use strings or ``Fraction`` when you want to
+express an exact decimal value without float representation concerns::
 
-    >>> base("4080.5", 10, 16, string=True)
-    'FF0.8'
+    from baseconvert import base
 
-Or from command line
+    base("FF0.8", 16, 10, string=True)  # '4080.5'
+    base("4080.5", 10, 16, string=True)  # 'FF0.8'
+    base("-0.1", 3, 10, string=True, exact=True)  # '-0.[3]'
 
-::
+The command-line interface reads from an argument or standard input::
 
-     $ echo 4080.5 | python -m baseconvert -i 10 -o 16
-     FF0.8
+    python -m baseconvert -n 4080.5 -i 10 -o 16
+    echo 4080.5 | python -m baseconvert -i 10 -o 16
 
-     $ python -m baseconvert -n 4080.5 -i 10 -o 16
-     FF0.8
+Digits, recurring fractions, and precision
+-----------------------------------------
 
-Tuple representation
---------------------
+String digits are
+``0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz``. Values
+above 61 use ascending Unicode characters; tuple representation is
+recommended for bases above 61. In a digit tuple, each digit is a base-10
+integer and the radix point is ``'.'``. A leading ``'-'`` represents a
+negative value.
 
-Numbers are represented as a sequence of digits. Each digit is a base-10
-integer value. The radix point, which separates the integer and
-fractional parts, is denoted by a string period.
-
-::
-
-     (int, int, int, ... , '.', ... , int, int, int)
-     (   integer part    , '.',  fractional part   )
-
-String representation
----------------------
-
-String digits (after z the values are in ascending Unicode):
-
-::
-
-    0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
-
-    |  Value  | Representation |
-    |---------|----------------|
-    |  0 -  9 |    0  -  9     |
-    | 10 - 53 |    A  -  Z     |
-    | 36 - 61 |    a  -  z     |
-    | 62 +    | unicode 123 +  |
-
-    For bases higher than 61 it's recommended to use tuple representation.
-
-Examples
---------
-
-::
-
-    # base(number, input_base, output_base)
-    >>> n = (15,15,".",0,8)
-    >>> base(n, 16, 10)
-    (2, 5, 5, '.', 0, 3, 1, 2, 5)
-    >>> base(n, 16, 10, string=True)
-    '255.03125'
-
-    >>> base("FF.08", 16, 10) == base((15,15,".",0,8), 16, 10)
-    True
-
-    # A callable BaseConverter object can also be created.
-    # This is useful for when several numbers need to be converted.
-
-    >>> b = BaseConverter(input_base=16, output_base=8)
-    >>> b("FF")
-    (3, 7, 7)
-    >>> b((15, 15))
-    (3, 7, 7)
-    >>> b("FF") == b((15,15))
-    True
-
-    >>> base(0.1, 3, 10, string=True)
-    '0.[3]'
-
-Recurring digits
-~~~~~~~~~~~~~~~~
-
-Recurring digits at the end of a fractional part will be enclosed by "["
-and "]" in both string and tuple representation. This behavior can be
-turned off by setting the recurring argument of base or BaseConverter
-object to False.
-
-::
-
-    >>> base("0.1", 3, 10, string=True)
-    '0.[3]'
-    >>> base("0.1", 3, 10, string=True, recurring=False)
-    '0.3333333333'
-
-Max fractional depth
-~~~~~~~~~~~~~~~~~~~~
-
-Integer parts are always of arbitrary size. Fractional depth (number of
-digits) can must be specified by setting the max\_depth argument of base
-or a BaseConverter object (default 10).
-
-::
-
-    >>> base("0.2", 10, 8)
-    (0, '.', 1, 4, 6, 3, 1, 4, 6, 3, 1, 4)
-    >>> base("0.2", 10, 8, max_depth=1)
-    (0, '.', 1)
+Recurring digits are enclosed in square brackets, for example ``0.[3]``.
+``max_depth`` limits the number of fractional digits (default 10). Set
+``exact=True`` or ``max_depth=0`` to calculate the complete terminating or
+repeating expansion when recurring output is enabled. Exact recurring
+detection uses rational remainders. When recurring output is disabled, an
+unlimited expansion is bounded by ``MAX_DEPTH``.
