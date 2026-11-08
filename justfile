@@ -50,7 +50,7 @@ check: lint test
 
 # Remove generated packaging artifacts
 clean:
-    rm -rf build dist *.egg-info
+    rm -rf build dist *.egg-info .coverage
     rm -rf .venv
 
 # Build fresh source and wheel distributions

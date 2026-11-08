@@ -40,7 +40,7 @@ check: lint test ## Run lint, tests, and Twine validation of dist/*
 	$(VENV_PYTHON) -m twine check dist/*
 
 clean: ## Remove generated packaging artifacts and .venv
-	rm -rf build dist *.egg-info .venv
+	rm -rf build dist *.egg-info .venv .coverage
 
 build: ## Clean, install dev tools, and build source and wheel distributions
 	$(MAKE) clean

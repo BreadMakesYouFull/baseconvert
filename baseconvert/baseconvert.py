@@ -219,11 +219,9 @@ def find_recurring(number: Iterable[Digit], min_repeat: int = 5) -> DigitTuple:
     fraction = number[point + 1 :]
     for period in range(1, len(fraction) // (min_repeat + 1) + 1):
         repetitions = 1
-        while (
-            (repetitions + 1) * period <= len(fraction)
-            and fraction[-period:]
-            == fraction[-(repetitions + 1) * period : -repetitions * period]
-        ):
+        while (repetitions + 1) * period <= len(fraction) and fraction[
+            -period:
+        ] == fraction[-(repetitions + 1) * period : -repetitions * period]:
             repetitions += 1
         if repetitions > min_repeat:
             start = len(number) - repetitions * period
@@ -391,8 +389,7 @@ def _fraction_to_digits(
             tuple(fractional_digits[:repeat_at])
             + ("[",)
             + tuple(fractional_digits[repeat_at:])
-            + ("]",
-            )
+            + ("]",)
         )
     else:
         fractional = tuple(fractional_digits)
