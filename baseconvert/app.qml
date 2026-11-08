@@ -16,7 +16,7 @@ ApplicationWindow {
     property int pageMargin: width < 370 ? 8 : 14
     property int cardPadding: compact ? 9 : 14
     property int sectionSpacing: compact ? 7 : 11
-    property int keyHeight: Math.max(20, Math.min(42, Math.floor((keypadPanel.height - 76) / 4)))
+    property int keyHeight: Math.max(20, Math.min(42, Math.floor((keypadPanel.height - keypadActions.height - keypadHeader.height - 32) / 4)))
     property color pageColor: darkMode ? "#111827" : "#f3f6fb"
     property color cardColor: darkMode ? "#1c2534" : "#ffffff"
     property color primaryText: darkMode ? "#f1f5f9" : "#172033"
@@ -36,11 +36,9 @@ ApplicationWindow {
     font.family: "Sans Serif"
     font.pixelSize: compact ? 13 : 14
 
-    background: Rectangle {
-        color: main.pageColor
-    }
+    background: Rectangle { color: main.pageColor }
 
-    // Keep the keypad fixed in view; only the compact conversion area scrolls.
+    // Keep the keypad fixed in view; only the conversion controls scroll.
     ScrollView {
         id: scroll
         anchors.top: parent.top
@@ -192,7 +190,7 @@ ApplicationWindow {
                         Layout.minimumWidth: 0
                         implicitHeight: main.compact ? 38 : 44
                         placeholderText: qsTr("Type a number")
-                        placeholderTextColor: main.darkMode ? "#8392a8" : "#7b8798"
+                        placeholderTextColor: main.darkMode ? "#a8b5c8" : "#7b8798"
                         font.family: "Monospace"
                         font.pixelSize: main.compact ? 17 : 19
                         selectByMouse: true
@@ -264,6 +262,7 @@ ApplicationWindow {
             spacing: main.compact ? 3 : 6
 
             RowLayout {
+                id: keypadHeader
                 Layout.fillWidth: true
                 Layout.preferredHeight: 20
                 Label {
@@ -323,6 +322,7 @@ ApplicationWindow {
             }
 
             ButtonRow {
+                id: keypadActions
                 Layout.fillWidth: true
                 Layout.preferredHeight: main.compact ? 32 : 38
                 darkMode: main.darkMode
