@@ -10,16 +10,15 @@ from .baseconvert import base
 
 
 class Backend(QObject):
-
     updateResult = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._default = "Output"
-        self._result = self._default
+        self._default: str = "Output"
+        self._result: str = self._default
 
     @Slot(str, int, int)
-    def input_changed(self, value, base_from, base_to):
+    def input_changed(self, value: str, base_from: int, base_to: int) -> None:
         if re.match("^[0-9A-Z]*[.]?[0-9A-Z]*$", value):
             try:
                 self._result = base(value, base_from, base_to, string=True, exact=True)
@@ -30,11 +29,11 @@ class Backend(QObject):
         self.updateResult.emit()
 
     @Property(str, notify=updateResult)
-    def result(self):
+    def result(self) -> str:
         return self._result
 
 
-def main():
+def main() -> None:
     backend = Backend()
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()

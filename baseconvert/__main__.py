@@ -9,11 +9,12 @@ Examples::
 
 import argparse
 import sys
+from typing import Sequence
 
-from baseconvert import base
+from baseconvert import DigitTuple, base
 
 
-def main():
+def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
     parser = argparse.ArgumentParser(
         description="Convert rational numbers between bases."
     )
@@ -57,7 +58,7 @@ def main():
         action="store_true",
         help="Output the number as a string rather than a tuple.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     options = {
         "string": args.string,
@@ -73,6 +74,7 @@ def main():
     from .gui import main as gui_main
 
     gui_main()
+    return None
 
 
 if __name__ == "__main__":

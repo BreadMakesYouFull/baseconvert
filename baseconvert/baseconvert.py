@@ -24,8 +24,12 @@ repeated remainders identify the exact start of a repetend.
 
 from fractions import Fraction
 from math import gcd
+from typing import Any, Iterable, Literal, TypeAlias
 
-MAX_DEPTH = 128
+MAX_DEPTH: int = 128
+Digit: TypeAlias = int | str
+DigitTuple: TypeAlias = tuple[Digit, ...]
+IntegerDigit: TypeAlias = int | Literal["-", "+"]
 
 
 class BaseConverter:
@@ -33,22 +37,22 @@ class BaseConverter:
 
     def __init__(
         self,
-        input_base,
-        output_base,
-        max_depth=10,
-        string=False,
-        recurring=True,
-        padding=0,
-        exact=False,
-    ):
-        self.input_base = input_base
-        self.output_base = output_base
-        self.max_depth = 0 if exact else max_depth
-        self.string = string
-        self.recurring = recurring
-        self.padding = padding
+        input_base: int,
+        output_base: int,
+        max_depth: int = 10,
+        string: bool = False,
+        recurring: bool = True,
+        padding: int = 0,
+        exact: bool = False,
+    ) -> None:
+        self.input_base: int = input_base
+        self.output_base: int = output_base
+        self.max_depth: int = 0 if exact else max_depth
+        self.string: bool = string
+        self.recurring: bool = recurring
+        self.padding: int = padding
 
-    def __call__(self, number):
+    def __call__(self, number: Any) -> str | DigitTuple:
         return base(
             number,
             self.input_base,
@@ -60,19 +64,19 @@ class BaseConverter:
         )
 
 
-def represent_as_tuple(string):
+def represent_as_tuple(string: str) -> DigitTuple:
     """Represent digit text as a tuple of integer digit values."""
     keep = (".", "[", "]", "-", "+")
     return tuple(str_digit_to_int(c) if c not in keep else c for c in string)
 
 
-def represent_as_string(iterable):
+def represent_as_string(iterable: Iterable[Digit]) -> str:
     """Represent a sequence of digits as text."""
     keep = (".", "[", "]", "-", "+")
     return "".join(int_to_str_digit(i) if i not in keep else i for i in iterable)
 
 
-def pad(iterable, n):
+def pad(iterable: str | Iterable[Digit], n: int) -> str | DigitTuple:
     """Left-pad the integer part of a string or digit sequence with zeroes."""
     if isinstance(iterable, str):
         integer_part = iterable.split(".", 1)[0]
@@ -82,14 +86,14 @@ def pad(iterable, n):
     return ("0",) * max(0, n - point) + iterable
 
 
-def digit(decimal, digit, input_base=10):
+def digit(decimal: int, digit: int, input_base: int = 10) -> int:
     """Return the value at a zero-indexed position in a positive integer."""
     if decimal == 0:
         return 0
     return (decimal // (input_base**digit)) % input_base
 
 
-def digits(number, base=10):
+def digits(number: int, base: int = 10) -> int:
     """Return the number of digits in a non-negative integer."""
     if number < 1:
         return 0
@@ -100,32 +104,34 @@ def digits(number, base=10):
     return count
 
 
-def integer_fractional_parts(number):
+def integer_fractional_parts(
+    number: DigitTuple,
+) -> tuple[DigitTuple, DigitTuple]:
     """Return the integer and fractional slices of a digit sequence."""
     radix_point = number.index(".")
     return number[:radix_point], number[radix_point:]
 
 
-def from_base_10_int(decimal, output_base=10):
+def from_base_10_int(decimal: int, output_base: int = 10) -> DigitTuple:
     """Convert an integer to a tuple of digits in ``output_base``."""
     if not isinstance(decimal, int):
         raise TypeError("decimal must be an integer")
     if not isinstance(output_base, int) or output_base < 1:
         raise ValueError("base must be a positive integer")
-    sign = ("-",) if decimal < 0 else ()
+    sign: DigitTuple = ("-",) if decimal < 0 else ()
     decimal = abs(decimal)
     if decimal == 0:
         return (0,)
     if output_base == 1:
         return sign + (1,) * decimal
-    result = []
+    result: list[int] = []
     while decimal:
         decimal, remainder = divmod(decimal, output_base)
         result.append(remainder)
     return sign + tuple(reversed(result))
 
 
-def to_base_10_int(n, input_base):
+def to_base_10_int(n: Iterable[IntegerDigit], input_base: int) -> int:
     """Convert integer digits, optionally prefixed by a sign, to an integer."""
     n = tuple(n)
     sign = 1
@@ -140,12 +146,19 @@ def to_base_10_int(n, input_base):
     return sign * value
 
 
-def integer_base(number, input_base=10, output_base=10):
+def integer_base(
+    number: Iterable[IntegerDigit], input_base: int = 10, output_base: int = 10
+) -> DigitTuple:
     """Convert an integer digit sequence between bases."""
     return from_base_10_int(to_base_10_int(number, input_base), output_base)
 
 
-def fractional_base(fractional_part, input_base=10, output_base=10, max_depth=10):
+def fractional_base(
+    fractional_part: DigitTuple,
+    input_base: int = 10,
+    output_base: int = 10,
+    max_depth: int = 10,
+) -> DigitTuple:
     """Convert a fractional digit sequence, limited to ``max_depth`` digits."""
     if input_base < 2 or output_base < 2:
         raise ValueError("fractional conversion requires bases of at least 2")
@@ -154,7 +167,7 @@ def fractional_base(fractional_part, input_base=10, output_base=10, max_depth=10
     numerator = 0
     for value in digits_in:
         numerator = numerator * input_base + value
-    result = ["."]
+    result: list[Digit] = ["."]
     remainder = numerator
     for _ in range(max_depth):
         digit_value, remainder = divmod(remainder * output_base, denominator)
@@ -164,7 +177,7 @@ def fractional_base(fractional_part, input_base=10, output_base=10, max_depth=10
     return tuple(result)
 
 
-def truncate(n):
+def truncate(n: Iterable[Digit]) -> DigitTuple:
     """Remove trailing fractional zeroes, preserving the radix point."""
     n = tuple(n)
     if "." not in n:
@@ -174,7 +187,7 @@ def truncate(n):
     return n
 
 
-def str_digit_to_int(chr):
+def str_digit_to_int(chr: str) -> int:
     """Convert a character to its digit value (0-9, A-Z, a-z, then Unicode)."""
     if "0" <= chr <= "9":
         return ord(chr) - ord("0")
@@ -184,7 +197,7 @@ def str_digit_to_int(chr):
     return value - 61
 
 
-def int_to_str_digit(n):
+def int_to_str_digit(n: int) -> str:
     """Convert a non-negative digit value to its character representation."""
     if n < 10:
         return str(n)
@@ -193,7 +206,7 @@ def int_to_str_digit(n):
     return chr(n + 61)
 
 
-def find_recurring(number, min_repeat=5):
+def find_recurring(number: Iterable[Digit], min_repeat: int = 5) -> DigitTuple:
     """Find a repeated suffix pattern in a finite fractional digit sequence.
 
     Kept for compatibility. The main converter now finds repetends exactly
@@ -217,7 +230,7 @@ def find_recurring(number, min_repeat=5):
     return number
 
 
-def expand_recurring(number, repeat=5):
+def expand_recurring(number: Iterable[Digit], repeat: int = 5) -> DigitTuple:
     """Expand a bracketed recurring pattern ``repeat`` additional times."""
     number = tuple(number)
     if "[" not in number:
@@ -228,7 +241,7 @@ def expand_recurring(number, repeat=5):
     return number[:start] + pattern * (repeat + 1) + number[end + 1 :]
 
 
-def check_valid(number, input_base=10):
+def check_valid(number: Iterable[Digit], input_base: int = 10) -> bool:
     """Return whether the numeral has valid digits and syntax for its base."""
     if not isinstance(input_base, int) or input_base < 1:
         return False
@@ -269,14 +282,14 @@ def check_valid(number, input_base=10):
     return True
 
 
-def _digits_value(digit_values, input_base):
+def _digits_value(digit_values: Iterable[int], input_base: int) -> int:
     value = 0
     for digit_value in digit_values:
         value = value * input_base + digit_value
     return value
 
 
-def _number_as_fraction(number, input_base):
+def _number_as_fraction(number: Any, input_base: int) -> Fraction:
     """Parse a numeral exactly, including an optional repetend and sign."""
     if isinstance(number, Fraction):
         return number
@@ -332,13 +345,15 @@ def _number_as_fraction(number, input_base):
     return sign * Fraction(numerator, denominator)
 
 
-def _fraction_to_digits(value, output_base, max_depth, recurring):
+def _fraction_to_digits(
+    value: Fraction, output_base: int, max_depth: int, recurring: bool
+) -> DigitTuple:
     """Render a Fraction using positional division and exact remainder cycles."""
     if not isinstance(output_base, int) or output_base < 1:
         raise ValueError("base must be a positive integer")
     if not isinstance(max_depth, int) or max_depth < 0:
         raise ValueError("max_depth must be a non-negative integer")
-    sign = ("-",) if value < 0 else ()
+    sign: DigitTuple = ("-",) if value < 0 else ()
     value = abs(value)
     if output_base == 1:
         if value.denominator != 1:
@@ -347,9 +362,9 @@ def _fraction_to_digits(value, output_base, max_depth, recurring):
 
     integer_value, remainder = divmod(value.numerator, value.denominator)
     integer_digits = from_base_10_int(integer_value, output_base)
-    fractional_digits = []
-    seen = {}
-    repeat_at = None
+    fractional_digits: list[int] = []
+    seen: dict[int, int] = {}
+    repeat_at: int | None = None
     limit = max_depth if max_depth else (None if recurring else MAX_DEPTH)
 
     while remainder:
@@ -370,14 +385,15 @@ def _fraction_to_digits(value, output_base, max_depth, recurring):
             tuple(fractional_digits[:repeat_at])
             + ("[",)
             + tuple(fractional_digits[repeat_at:])
-            + ("]",)
+            + ("]",
+            )
         )
     else:
         fractional = tuple(fractional_digits)
     return sign + integer_digits + (".",) + fractional
 
 
-def _pad_signed(result, padding):
+def _pad_signed(result: DigitTuple, padding: int) -> DigitTuple:
     sign = result[:1] if result[:1] in (("-",), ("+",)) else ()
     body = result[len(sign) :]
     point = body.index(".") if "." in body else len(body)
@@ -385,21 +401,23 @@ def _pad_signed(result, padding):
 
 
 def base(
-    number,
-    input_base=10,
-    output_base=10,
-    max_depth=10,
-    string=False,
-    recurring=True,
-    padding=0,
-    exact=False,
-):
+    number: Any,
+    input_base: int = 10,
+    output_base: int = 10,
+    max_depth: int = 10,
+    string: bool = False,
+    recurring: bool = True,
+    padding: int = 0,
+    exact: bool = False,
+) -> str | DigitTuple:
     """Convert a rational numeral between positive integer bases.
 
-    ``max_depth`` limits fractional digits. ``exact=True`` or ``max_depth=0``
-    computes the full terminating or repeating expansion when ``recurring`` is
-    enabled. If recurring output is disabled, an unlimited request is bounded
-    by ``MAX_DEPTH`` for compatibility.
+    ``number`` intentionally accepts a flexible set of inputs: strings, digit
+    iterables, integers, floats, and ``Fraction`` instances. ``max_depth``
+    limits fractional digits. ``exact=True`` or ``max_depth=0`` computes the
+    full terminating or repeating expansion when ``recurring`` is enabled. If
+    recurring output is disabled, an unlimited request is bounded by
+    ``MAX_DEPTH`` for compatibility.
     """
     if not isinstance(input_base, int) or input_base < 1:
         raise ValueError("base must be a positive integer")
