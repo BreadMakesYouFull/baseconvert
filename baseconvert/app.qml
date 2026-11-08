@@ -297,16 +297,15 @@ ApplicationWindow {
                 columnSpacing: main.compact ? 2 : 4
 
                 Repeater {
-                    model: 37
+                    model: Math.round(from.value) + 1
                     delegate: Button {
                         required property int index
-                        property bool pointKey: index === 36
+                        property bool pointKey: index === Math.round(from.value)
                         property int digitValue: index
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.minimumWidth: 0
                         Layout.minimumHeight: 0
-                        enabled: pointKey || digitValue < Math.round(from.value)
                         text: pointKey ? "." : (digitValue < 10 ? digitValue.toString() : String.fromCharCode(55 + digitValue))
                         font.family: pointKey ? "Sans Serif" : "Monospace"
                         font.pixelSize: pointKey ? Math.min(22, main.keyHeight * 0.78) : Math.min(16, main.keyHeight * 0.48)
