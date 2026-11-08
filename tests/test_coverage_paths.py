@@ -138,3 +138,36 @@ def test_high_unicode_digit_and_miscellaneous_core_edges():
     )
     assert truncate((1, 2, 3)) == (1, 2, 3)
     assert base("1", 10, 2, string=True, padding=3) == "001"
+
+
+@pytest.mark.parametrize(
+    ("number", "input_base", "output_base", "expected"),
+    [
+        # 975*976 + 975 = 952575 = 50*18792 + 12975.
+        ((975, 975), 976, 18_792, (50, 12_975)),
+        # 1*1024 = 2**10.
+        ((1, 0), 1024, 2, (1,) + (0,) * 10),
+        # 1*256 = 0x100.
+        ((1, 0), 256, 16, (1, 0, 0)),
+        # 1*100 + 1 = 101.
+        ((1, 1), 100, 10, (1, 0, 1)),
+        # 1*100 + 23 = 1234 = 1*1000 + 234.
+        ((1, 23), 100, 1000, (1, 234)),
+        # 1*1000 + 234 = 1234 = 12*100 + 34.
+        ((1, 234), 1000, 100, (12, 34)),
+        # 35*36 + 35 = 1295.
+        ((35, 35), 36, 10, (1, 2, 9, 5)),
+        # 1*256**2 = 65536 = 0x10000.
+        ((1, 0, 0), 256, 16, (1, 0, 0, 0, 0)),
+        # 1*65536 = 1*256**2.
+        ((1, 0), 65_536, 256, (1, 0, 0)),
+        # 5*100**2 + 6*100 + 7 = 50607.
+        ((5, 6, 7), 100, 10, (5, 0, 6, 0, 7)),
+    ],
+)
+def test_large_base_integer_conversions_round_trip(
+    number, input_base, output_base, expected
+):
+    converted = base(number, input_base, output_base)
+    assert converted == expected
+    assert base(converted, output_base, input_base) == number
