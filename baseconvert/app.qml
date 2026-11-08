@@ -16,26 +16,38 @@ ApplicationWindow {
     property int pageMargin: width < 370 ? 8 : 14
     property int cardPadding: compact ? 9 : 14
     property int sectionSpacing: compact ? 7 : 11
-    property color pageColor: darkMode ? "#111827" : "#f3f6fb"
-    property color cardColor: darkMode ? "#1c2534" : "#ffffff"
-    property color primaryText: darkMode ? "#f1f5f9" : "#172033"
-    property color secondaryText: darkMode ? "#9aa8bb" : "#667085"
-    property color accent: darkMode ? "#8ab4ff" : "#315fe8"
+
+    // Calculator-inspired casing, warm keycaps, and a high-contrast LCD.
+    property color pageColor: darkMode ? "#172321" : "#d8ded6"
+    property color cardColor: darkMode ? "#2b3935" : "#c3cbc3"
+    property color primaryText: darkMode ? "#f1f0df" : "#202925"
+    property color secondaryText: darkMode ? "#a9b8ad" : "#536159"
+    property color accent: darkMode ? "#65e6ca" : "#087e72"
+    property color lcdColor: darkMode ? "#071512" : "#10201c"
+    property color lcdText: "#70f3d4"
+    property color keyColor: darkMode ? "#d8dfd2" : "#f0f0df"
+    property color keyText: "#18211e"
+    property color keyBorder: darkMode ? "#f5f4e5" : "#ffffff"
+    property color orange: darkMode ? "#e97832" : "#d95d1c"
 
     color: pageColor
     palette.window: pageColor
     palette.windowText: primaryText
-    palette.base: darkMode ? "#141d2a" : "#f8faff"
+    palette.base: lcdColor
     palette.alternateBase: cardColor
     palette.text: primaryText
-    palette.button: cardColor
-    palette.buttonText: primaryText
+    palette.button: keyColor
+    palette.buttonText: keyText
     palette.highlight: accent
-    palette.highlightedText: "#ffffff"
+    palette.highlightedText: "#071512"
     font.family: "Sans Serif"
     font.pixelSize: compact ? 13 : 14
 
-    background: Rectangle { color: main.pageColor }
+    background: Rectangle {
+        color: main.pageColor
+        border.width: 1
+        border.color: main.darkMode ? "#43534c" : "#aab4aa"
+    }
 
     ColumnLayout {
         id: layout
@@ -48,26 +60,37 @@ ApplicationWindow {
             ColumnLayout {
                 spacing: 1
                 Label {
-                    text: qsTr("Baseconvert")
+                    text: qsTr("BASECONVERT")
                     color: main.primaryText
-                    font.pixelSize: main.compact ? 20 : 23
-                    font.weight: Font.DemiBold
+                    font.family: "Monospace"
+                    font.pixelSize: main.compact ? 19 : 22
+                    font.weight: Font.Black
+                    font.letterSpacing: 1.2
                 }
                 Label {
                     visible: !main.compact
-                    text: qsTr("Convert numbers between bases")
+                    text: qsTr("RADIX CALCULATOR")
                     color: main.secondaryText
-                    font.pixelSize: 12
+                    font.family: "Monospace"
+                    font.pixelSize: 10
+                    font.letterSpacing: 1.4
                 }
             }
             Item { Layout.fillWidth: true }
             ToolButton {
+                id: themeToggle
                 text: main.darkMode ? "☀" : "☾"
                 font.pixelSize: 20
                 Accessible.name: main.darkMode ? qsTr("Switch to light mode") : qsTr("Switch to dark mode")
                 ToolTip.visible: hovered
                 ToolTip.text: Accessible.name
                 onClicked: backend.toggle_theme()
+                background: Rectangle {
+                    radius: 8
+                    color: themeToggle.down ? (main.darkMode ? "#43534c" : "#b0bab0") : main.cardColor
+                    border.color: main.darkMode ? "#53645b" : "#aab4aa"
+                    border.width: 1
+                }
             }
         }
 
@@ -75,10 +98,10 @@ ApplicationWindow {
             Layout.fillWidth: true
             padding: main.cardPadding
             background: Rectangle {
-                radius: 15
+                radius: 12
                 color: main.cardColor
                 border.width: 1
-                border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                border.color: main.darkMode ? "#53645b" : "#aab4aa"
             }
             RowLayout {
                 anchors.fill: parent
@@ -88,13 +111,14 @@ ApplicationWindow {
                     Layout.minimumWidth: 0
                     RowLayout {
                         Layout.fillWidth: true
-                        Label { text: qsTr("FROM"); color: main.secondaryText; font.pixelSize: 11 }
+                        Label { text: qsTr("FROM"); color: main.secondaryText; font.family: "Monospace"; font.pixelSize: 10; font.weight: Font.Bold }
                         Item { Layout.fillWidth: true }
                         Label {
                             text: Math.round(from.value).toString()
                             color: main.primaryText
+                            font.family: "Monospace"
                             font.pixelSize: 17
-                            font.weight: Font.DemiBold
+                            font.weight: Font.Bold
                         }
                     }
                     Slider {
@@ -111,20 +135,21 @@ ApplicationWindow {
                 Rectangle {
                     Layout.preferredWidth: 1
                     Layout.preferredHeight: 40
-                    color: main.darkMode ? "#344258" : "#e5eaf2"
+                    color: main.darkMode ? "#53645b" : "#aab4aa"
                 }
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.minimumWidth: 0
                     RowLayout {
                         Layout.fillWidth: true
-                        Label { text: qsTr("TO"); color: main.secondaryText; font.pixelSize: 11 }
+                        Label { text: qsTr("TO"); color: main.secondaryText; font.family: "Monospace"; font.pixelSize: 10; font.weight: Font.Bold }
                         Item { Layout.fillWidth: true }
                         Label {
                             text: Math.round(to.value).toString()
                             color: main.primaryText
+                            font.family: "Monospace"
                             font.pixelSize: 17
-                            font.weight: Font.DemiBold
+                            font.weight: Font.Bold
                         }
                     }
                     Slider {
@@ -147,10 +172,10 @@ ApplicationWindow {
             Layout.minimumHeight: 145
             padding: main.cardPadding
             background: Rectangle {
-                radius: 15
+                radius: 12
                 color: main.cardColor
                 border.width: 1
-                border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                border.color: main.darkMode ? "#53645b" : "#aab4aa"
             }
             ColumnLayout {
                 anchors.fill: parent
@@ -158,8 +183,9 @@ ApplicationWindow {
                 Label {
                     text: qsTr("INPUT · BASE %1").arg(Math.round(from.value))
                     color: main.secondaryText
+                    font.family: "Monospace"
                     font.pixelSize: 10
-                    font.weight: Font.DemiBold
+                    font.weight: Font.Bold
                     font.letterSpacing: 1
                 }
                 TextField {
@@ -169,12 +195,14 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.minimumHeight: 42
                     placeholderText: qsTr("Type a number")
-                    placeholderTextColor: main.darkMode ? "#a8b5c8" : "#7b8798"
+                    placeholderTextColor: "#76988c"
                     font.family: "Monospace"
                     font.pixelSize: main.compact ? 17 : 19
                     selectByMouse: true
                     focus: true
-                    color: main.primaryText
+                    color: main.lcdText
+                    selectionColor: main.accent
+                    selectedTextColor: main.lcdColor
                     onTextChanged: {
                         var sanitized = input.text.toUpperCase().replace(/[^A-Z0-9.]/g, "")
                         if (input.text !== sanitized)
@@ -182,10 +210,10 @@ ApplicationWindow {
                         backend.input_changed(input.text, Math.round(from.value), Math.round(to.value))
                     }
                     background: Rectangle {
-                        radius: 9
-                        color: main.darkMode ? "#141d2a" : "#f7f9fd"
+                        radius: 7
+                        color: main.lcdColor
                         border.width: input.activeFocus ? 2 : 1
-                        border.color: input.activeFocus ? main.accent : (main.darkMode ? "#35445a" : "#dce3ee")
+                        border.color: input.activeFocus ? main.accent : (main.darkMode ? "#53645b" : "#78877d")
                     }
                 }
                 RowLayout {
@@ -193,8 +221,9 @@ ApplicationWindow {
                     Label {
                         text: qsTr("RESULT · BASE %1").arg(Math.round(to.value))
                         color: main.secondaryText
+                        font.family: "Monospace"
                         font.pixelSize: 10
-                        font.weight: Font.DemiBold
+                        font.weight: Font.Bold
                         font.letterSpacing: 1
                     }
                     Item { Layout.fillWidth: true }
@@ -210,8 +239,14 @@ ApplicationWindow {
                             if (outputText !== "Output")
                                 input.text = outputText
                         }
-                        palette.button: main.darkMode ? "#315a9f" : "#315fe8"
+                        palette.button: main.darkMode ? "#176c61" : "#168477"
                         palette.buttonText: "#ffffff"
+                        background: Rectangle {
+                            radius: 7
+                            color: parent.down ? "#12574f" : (main.darkMode ? "#176c61" : "#168477")
+                            border.color: main.darkMode ? "#55cbb3" : "#0c6d61"
+                            border.width: 1
+                        }
                     }
                     Button {
                         text: qsTr("RESET") + "  ⌫"
@@ -223,8 +258,14 @@ ApplicationWindow {
                             from.value = 10
                             to.value = 36
                         }
-                        palette.button: main.darkMode ? "#b45309" : "#f59e0b"
+                        palette.button: main.orange
                         palette.buttonText: "#ffffff"
+                        background: Rectangle {
+                            radius: 7
+                            color: parent.down ? "#a84717" : main.orange
+                            border.color: main.darkMode ? "#ffab69" : "#a9471b"
+                            border.width: 1
+                        }
                     }
                 }
                 TextField {
@@ -238,10 +279,15 @@ ApplicationWindow {
                     selectByMouse: true
                     font.family: "Monospace"
                     font.pixelSize: main.compact ? 17 : 20
-                    color: main.primaryText
+                    font.weight: Font.DemiBold
+                    color: main.lcdText
+                    selectionColor: main.accent
+                    selectedTextColor: main.lcdColor
                     background: Rectangle {
-                        radius: 9
-                        color: main.darkMode ? "#202c3e" : "#e9efff"
+                        radius: 7
+                        color: main.lcdColor
+                        border.width: 1
+                        border.color: main.darkMode ? "#53645b" : "#78877d"
                     }
                 }
             }
@@ -254,10 +300,10 @@ ApplicationWindow {
             Layout.minimumHeight: 150
             padding: main.compact ? 6 : 9
             background: Rectangle {
-                radius: 15
+                radius: 12
                 color: main.cardColor
                 border.width: 1
-                border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                border.color: main.darkMode ? "#53645b" : "#aab4aa"
             }
             ColumnLayout {
                 anchors.fill: parent
@@ -268,8 +314,9 @@ ApplicationWindow {
                     Label {
                         text: qsTr("KEYPAD")
                         color: main.secondaryText
+                        font.family: "Monospace"
                         font.pixelSize: 10
-                        font.weight: Font.DemiBold
+                        font.weight: Font.Bold
                         font.letterSpacing: 1
                     }
                     Item { Layout.fillWidth: true }
@@ -292,16 +339,18 @@ ApplicationWindow {
                             Layout.minimumWidth: 0
                             Layout.minimumHeight: 0
                             text: pointKey ? "." : (digitValue < 10 ? digitValue.toString() : String.fromCharCode(55 + digitValue))
-                            font.family: pointKey ? "Sans Serif" : "Monospace"
+                            font.family: "Monospace"
                             font.pixelSize: pointKey ? Math.min(22, keypadGrid.height / 5 * 0.78) : Math.min(16, keypadGrid.height / 5 * 0.48)
-                            font.weight: pointKey ? Font.Black : Font.DemiBold
+                            font.weight: Font.Black
                             Accessible.name: pointKey ? qsTr("Radix point") : text
-                            palette.button: pointKey
-                                ? (main.darkMode ? "#087f75" : "#a5eee1")
-                                : (main.darkMode ? "#29384d" : "#f0f3f9")
-                            palette.buttonText: pointKey
-                                ? (main.darkMode ? "#ffffff" : "#064f4b")
-                                : main.primaryText
+                            palette.button: pointKey ? (main.darkMode ? "#176c61" : "#a5eee1") : main.keyColor
+                            palette.buttonText: pointKey ? (main.darkMode ? "#ffffff" : "#064f4b") : main.keyText
+                            background: Rectangle {
+                                radius: Math.min(8, height * 0.22)
+                                color: parent.down ? (pointKey ? "#12574f" : "#b8c2b5") : (pointKey ? (main.darkMode ? "#176c61" : "#a5eee1") : main.keyColor)
+                                border.width: 1
+                                border.color: pointKey ? (main.darkMode ? "#55cbb3" : "#0c6d61") : main.keyBorder
+                            }
                             onClicked: input.text += pointKey ? "." : text
                         }
                     }
