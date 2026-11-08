@@ -23,7 +23,7 @@ install-gui: venv
 
 # Install development and release tools into the virtual environment
 install-dev: venv
-    {{venv_python}} -m pip install black build twine
+    {{venv_python}} -m pip install build black twine
 
 # Format Python source
 format: install-dev
@@ -48,18 +48,19 @@ clean:
 clean-all: clean
     rm -rf .venv
 
-# Build source and wheel distributions
+# Build fresh source and wheel distributions
 build: install-dev
+    just clean
     {{venv_python}} -m build
 
 # Validate built distributions
 check-dist: build
     {{venv_python}} -m twine check dist/*
 
-# Upload distributions to TestPyPI
-publish-test: check-dist
+# Build, test, validate, and upload to TestPyPI
+publish-test: check check-dist
     {{venv_python}} -m twine upload --repository testpypi dist/*
 
-# Upload distributions to PyPI; run only when intentionally publishing
-publish: check-dist
+# Build, test, validate, and upload to PyPI; run only when intentionally publishing
+publish: check check-dist
     {{venv_python}} -m twine upload dist/*
