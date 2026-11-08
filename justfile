@@ -41,7 +41,7 @@ lint: install-dev
 test: venv
     {{venv_python}} baseconvert/baseconvert.py
 
-# Run the CI checks
+# Run the local checks
 check: lint test
 
 # Remove generated packaging artifacts
@@ -53,8 +53,7 @@ clean-all: clean
     rm -rf .venv
 
 # Build fresh source and wheel distributions
-build: install-dev
-    just clean
+build: clean install-dev
     {{venv_python}} -m build
 
 # Validate built distributions

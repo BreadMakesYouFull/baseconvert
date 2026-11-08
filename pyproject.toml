@@ -7,7 +7,7 @@ name = "baseconvert"
 dynamic = ["version"]
 description = "Convert numbers between bases."
 readme = "README.rst"
-requires-python = ">=3"
+requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "squdle, BreadMakesYouFull" }]
 keywords = [
