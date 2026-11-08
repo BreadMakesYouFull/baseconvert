@@ -213,6 +213,19 @@ ApplicationWindow {
                         palette.button: main.darkMode ? "#315a9f" : "#315fe8"
                         palette.buttonText: "#ffffff"
                     }
+                    Button {
+                        text: qsTr("RESET") + "  ⌫"
+                        Accessible.name: qsTr("Reset number and bases")
+                        ToolTip.visible: hovered
+                        ToolTip.text: qsTr("Clear number and reset bases to 10 and 36")
+                        onClicked: {
+                            input.text = ""
+                            from.value = 10
+                            to.value = 36
+                        }
+                        palette.button: main.darkMode ? "#b45309" : "#f59e0b"
+                        palette.buttonText: "#ffffff"
+                    }
                 }
                 TextField {
                     id: output
@@ -304,36 +317,6 @@ ApplicationWindow {
                             onClicked: input.text += pointKey ? "." : text
                         }
                     }
-                }
-            }
-        }
-
-        ButtonRow {
-            id: keypadActions
-            Layout.fillWidth: true
-            Layout.preferredHeight: main.compact ? 38 : 44
-            darkMode: main.darkMode
-            text1: "RESET"
-            text2: "CLEAR"
-            text3: "⌫"
-            text4: ""
-            color1: main.darkMode ? "#b45309" : "#f59e0b"
-            colorText1: "#ffffff"
-            color2: main.darkMode ? "#344258" : "#e3eaf7"
-            color3: main.darkMode ? "#344258" : "#e3eaf7"
-            color4: main.darkMode ? "#344258" : "#e3eaf7"
-            enable4: false
-            enable5: false
-            enable6: false
-            onButtonPressed: (text) => {
-                if (text === "RESET") {
-                    input.text = ""
-                    from.value = 10
-                    to.value = 36
-                } else if (text === "CLEAR") {
-                    input.text = ""
-                } else if (text === "⌫") {
-                    input.text = input.text.slice(0, -1)
                 }
             }
         }
