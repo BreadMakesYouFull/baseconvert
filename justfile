@@ -28,9 +28,9 @@ launch:
     fi
     .venv/bin/baseconvert
 
-# Install development and release tools into the virtual environment
+# Install development, test, and release tools into the virtual environment
 install-dev: venv
-    {{venv_python}} -m pip install build black twine
+    {{venv_python}} -m pip install build black twine pytest pytest-cov
 
 # Format Python source
 format: install-dev
@@ -40,9 +40,9 @@ format: install-dev
 lint: install-dev
     {{venv_python}} -m black --check baseconvert
 
-# Run the module's doctests
-test: venv
-    {{venv_python}} baseconvert/baseconvert.py
+# Run pytest and report coverage for the core library and CLI
+test: install-dev
+    {{venv_python}} -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing tests
 
 # Run the local checks
 check: lint test

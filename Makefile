@@ -24,8 +24,8 @@ launch: ## Launch GUI, installing its dependencies if needed
 	fi
 	.venv/bin/baseconvert
 
-install-dev: venv ## Install development and release tools
-	$(VENV_PYTHON) -m pip install build black twine
+install-dev: venv ## Install development, test, and release tools
+	$(VENV_PYTHON) -m pip install build black twine pytest pytest-cov
 
 format: install-dev ## Format Python source
 	$(VENV_PYTHON) -m black baseconvert
@@ -33,10 +33,10 @@ format: install-dev ## Format Python source
 lint: install-dev ## Check Python formatting
 	$(VENV_PYTHON) -m black --check baseconvert
 
-test: venv ## Run the module's doctests
-	$(VENV_PYTHON) baseconvert/baseconvert.py
+test: install-dev ## Run pytest and report core library/CLI coverage
+	$(VENV_PYTHON) -m pytest --cov=baseconvert.baseconvert --cov=baseconvert.__main__ --cov-report=term-missing tests
 
-check: lint test ## Run lint, doctests, and Twine validation of dist/*
+check: lint test ## Run lint, tests, and Twine validation of dist/*
 	$(VENV_PYTHON) -m twine check dist/*
 
 clean: ## Remove generated packaging artifacts and .venv
