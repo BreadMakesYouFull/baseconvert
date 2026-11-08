@@ -73,7 +73,7 @@ recurring notation::
     echo 0.1 | python -m baseconvert -i 3 -o 10 --no-recurring -s
 
 Digits, recurring fractions, and precision
------------------------------------------
+------------------------------------------
 
 String digits are
 ``0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz``. Values
