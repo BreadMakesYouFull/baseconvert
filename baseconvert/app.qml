@@ -2,291 +2,397 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 ApplicationWindow {
     id: main
-    width: 400
-    height: 400
-    minimumWidth: 300
-    minimumHeight: 150
+    width: 440
+    height: 700
+    minimumWidth: 340
+    minimumHeight: 420
     visible: true
-    title: "baseconvert"
-    property string result: ""
+    title: qsTr("Baseconvert")
     property bool darkMode: backend.darkMode
-    color: darkMode ? "#121212" : "#f5f5f5"
-    palette.window: color
-    palette.windowText: darkMode ? "#f5f5f5" : "#202020"
-    palette.base: darkMode ? "#1e1e1e" : "#ffffff"
-    palette.alternateBase: darkMode ? "#292929" : "#eeeeee"
-    palette.text: darkMode ? "#f5f5f5" : "#202020"
-    palette.button: darkMode ? "#333333" : "#eeeeee"
-    palette.buttonText: darkMode ? "#ffffff" : "#202020"
-    palette.highlight: darkMode ? "#275fb8" : "#275fb8"
-    palette.highlightedText: "#ffffff"
-    font: Qt.font({
-        bold: true,
-        underline: false,
-        pixelSize: ((main.height > 300) ? ((main.height > main.width) ? main.width / 30 : main.height / 30) : main.height / 8) * 1.1,
-        family: "monospace"
-    })
-    property var fontLarge: Qt.font({
-        bold: true,
-        underline: false,
-        pixelSize: main.font.pixelSize * 1.5,
-        family: "monospace"
-    })
+    property color pageColor: darkMode ? "#111827" : "#f3f6fb"
+    property color cardColor: darkMode ? "#1c2534" : "#ffffff"
+    property color primaryText: darkMode ? "#f1f5f9" : "#172033"
+    property color secondaryText: darkMode ? "#9aa8bb" : "#667085"
+    property color accent: darkMode ? "#8ab4ff" : "#315fe8"
+    color: pageColor
 
-    ColumnLayout {
-        id: mainLayout
+    palette.window: pageColor
+    palette.windowText: primaryText
+    palette.base: darkMode ? "#141d2a" : "#f8faff"
+    palette.alternateBase: cardColor
+    palette.text: primaryText
+    palette.button: cardColor
+    palette.buttonText: primaryText
+    palette.highlight: accent
+    palette.highlightedText: "#ffffff"
+    font.family: "Sans Serif"
+    font.pixelSize: 14
+
+    background: Rectangle {
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: main.darkMode ? "#101827" : "#edf3ff" }
+            GradientStop { position: 1.0; color: main.pageColor }
+        }
+    }
+
+    ScrollView {
+        id: scroll
         anchors.fill: parent
-        RowLayout {
-            TextField {
-                id: input
-                Layout.fillWidth: true
-                Layout.columnSpan: 1
-                placeholderText: qsTr("Input")
-                font: main.fontLarge
-                onTextChanged: {
-                    input.text = input.text.toUpperCase().replace(/[^A-Z0-9.]/g, '')
-                    backend.input_changed(input.text, from.value, to.value);
-                }
-                focus: true
-            }
-            ToolButton {
-                id: themeToggle
-                text: main.darkMode ? "☀" : "☾"
-                font.pixelSize: main.font.pixelSize * 1.4
-                ToolTip.visible: hovered
-                ToolTip.text: main.darkMode ? qsTr("Switch to light mode") : qsTr("Switch to dark mode")
-                Accessible.name: ToolTip.text
-                onClicked: backend.toggle_theme()
-            }
-        }
-        RowLayout {
-            Label {
-                id: from_text
-                text: "from 10"
-                horizontalAlignment: Qt.AlignRight
-            }
-            Slider {
-                id: from
-                Layout.fillWidth: true
-                Layout.columnSpan: 2
-                from: 2
-                value: 10
-                to: 36
-                stepSize: 1
-                onValueChanged: {
-                    backend.input_changed(input.text, from.value, to.value);
-                    from_text.text = "from " + from.value.toString();
-                }
-                handle.implicitWidth: to_text.height
-                handle.implicitHeight: to_text.height
-            }
-        }
-        RowLayout {
-            Label {
-                id: to_text
-                text: "  to 36"
-                horizontalAlignment: Qt.AlignRight
-            }
-            Slider {
-                id: to
-                Layout.fillWidth: true
-                Layout.columnSpan: 2
-                from: 2
-                value: 36
-                to: 36
-                stepSize: 1
-                onValueChanged: {
-                    backend.input_changed(input.text, from.value, to.value);
-                    to_text.text = "  to " + to.value.toString();
-                }
-                handle.implicitWidth: to_text.height
-                handle.implicitHeight: to_text.height
-            }
-        }
+        anchors.margins: 16
+        clip: true
+        contentWidth: availableWidth
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
         ColumnLayout {
-            TextField {
-                id: output
-                text: backend.result
+            id: page
+            width: scroll.availableWidth
+            spacing: 14
+
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.columnSpan: 1
-                font: main.fontLarge
-                readOnly: true
-            }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            darkMode: main.darkMode
-            text1: "FLIP"
-            text2: "RESET"
-            text3: "CLEAR"
-            text4: "< DELETE"
-            enable5: false
-            enable6: false
-            color1: darkMode ? "#0D47A1" : "#275fb8"
-            color2: darkMode ? "#C8090B" : "#f51618"
-            color3: darkMode ? "#C8090B" : "#f51618"
-            color4: darkMode ? "#C63100" : "#ff6633"
-            onButtonPressed: (text) => {
-                if (text == "FLIP") {
-                    var base_from = from.value;
-                    var base_to = to.value;
-                    var out_text = output.text;
-                    out_text = out_text.replace("\\", "");
-                    out_text = out_text.replace("\n", "");
-                    out_text = out_text.replace("\n", "");
-                    out_text = out_text.replace(" ", "");
-                    to.value = base_from;
-                    from.value = base_to;
-                    if (!out_text.includes("Output")) {
-                        input.text = out_text;
+                Layout.topMargin: 2
+                Layout.bottomMargin: 2
+                ColumnLayout {
+                    spacing: 2
+                    Label {
+                        text: qsTr("Baseconvert")
+                        color: main.primaryText
+                        font.pixelSize: 25
+                        font.weight: Font.DemiBold
+                    }
+                    Label {
+                        text: qsTr("Convert numbers between bases")
+                        color: main.secondaryText
+                        font.pixelSize: 13
                     }
                 }
-                if (text == "RESET") {
-                    input.text = "";
-                    from.value = 10;
-                    to.value = 36;
-                }
-                if (text == "CLEAR") {
-                    input.text = "";
-                }
-                if (text == "< DELETE") {
-                    input.text = input.text.slice(0, -1);
+                Item { Layout.fillWidth: true }
+                ToolButton {
+                    id: themeToggle
+                    text: main.darkMode ? "☀" : "☾"
+                    font.pixelSize: 21
+                    Accessible.name: main.darkMode ? qsTr("Switch to light mode") : qsTr("Switch to dark mode")
+                    ToolTip.visible: hovered
+                    ToolTip.text: Accessible.name
+                    onClicked: backend.toggle_theme()
+                    background: Rectangle {
+                        radius: 13
+                        color: themeToggle.down
+                            ? (main.darkMode ? "#334155" : "#dce7ff")
+                            : (main.darkMode ? "#263449" : "#e4ecff")
+                    }
                 }
             }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            darkMode: main.darkMode
-            text1: "V"
-            text2: "W"
-            text3: "X"
-            text4: "Y"
-            text5: "Z"
-            enable1: from.value >= 32
-            enable2: from.value >= 33
-            enable3: from.value >= 34
-            enable4: from.value >= 35
-            enable5: from.value >= 36
-            enable6: true
-            text6: "."
-            color6: darkMode ? "#006064" : "#109ba1"
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: from.value >= 26
-            darkMode: main.darkMode
-            text1: "P"
-            text2: "Q"
-            text3: "R"
-            text4: "S"
-            text5: "T"
-            text6: "U"
-            enable1: from.value >= 26
-            enable2: from.value >= 27
-            enable3: from.value >= 28
-            enable4: from.value >= 29
-            enable5: from.value >= 30
-            enable6: from.value >= 31
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: from.value >= 20
-            darkMode: main.darkMode
-            text1: "J"
-            text2: "K"
-            text3: "L"
-            text4: "M"
-            text5: "N"
-            text6: "O"
-            enable1: from.value >= 20
-            enable2: from.value >= 21
-            enable3: from.value >= 22
-            enable4: from.value >= 23
-            enable5: from.value >= 24
-            enable6: from.value >= 25
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: from.value >= 14
-            darkMode: main.darkMode
-            text1: "D"
-            text2: "E"
-            text3: "F"
-            text4: "G"
-            text5: "H"
-            text6: "I"
-            enable1: from.value >= 14
-            enable2: from.value >= 15
-            enable3: from.value >= 16
-            enable4: from.value >= 17
-            enable5: from.value >= 18
-            enable6: from.value >= 19
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: from.value >= 8
-            darkMode: main.darkMode
-            text1: "7"
-            text2: "8"
-            text3: "9"
-            text4: "A"
-            text5: "B"
-            text6: "C"
-            enable1: from.value >= 8
-            enable2: from.value >= 9
-            enable3: from.value >= 10
-            enable4: from.value >= 11
-            enable5: from.value >= 12
-            enable6: from.value >= 13
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: from.value >= 2
-            darkMode: main.darkMode
-            text1: "1"
-            text2: "2"
-            text3: "3"
-            text4: "4"
-            text5: "5"
-            text6: "6"
-            enable1: from.value >= 2
-            enable2: from.value >= 3
-            enable3: from.value >= 4
-            enable4: from.value >= 5
-            enable5: from.value >= 6
-            enable6: from.value >= 7
-            onButtonPressed: (text) => { input.text += text }
-        }
-        ButtonRow {
-            visible: main.height > 300
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            darkMode: main.darkMode
-            text1: "0"
-            color1: darkMode ? "#0D47A1" : "#275fb8"
-            onButtonPressed: (text) => { input.text += text }
-            enable2: false
-            enable3: false
-            enable4: false
-            enable5: false
-            enable6: false
+
+            Frame {
+                Layout.fillWidth: true
+                padding: 16
+                background: Rectangle {
+                    radius: 18
+                    color: main.cardColor
+                    border.width: 1
+                    border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                }
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 14
+                    Label {
+                        text: qsTr("CONVERSION")
+                        color: main.secondaryText
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 1.2
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 14
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+                            Label {
+                                text: qsTr("FROM")
+                                color: main.secondaryText
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
+                            }
+                            Label {
+                                text: Math.round(from.value).toString()
+                                color: main.primaryText
+                                font.pixelSize: 22
+                                font.weight: Font.DemiBold
+                            }
+                            Slider {
+                                id: from
+                                Layout.fillWidth: true
+                                from: 2
+                                to: 36
+                                value: 10
+                                stepSize: 1
+                                onValueChanged: backend.input_changed(input.text, Math.round(from.value), Math.round(to.value))
+                            }
+                        }
+                        Rectangle {
+                            Layout.preferredWidth: 1
+                            Layout.preferredHeight: 62
+                            color: main.darkMode ? "#344258" : "#e5eaf2"
+                        }
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+                            Label {
+                                text: qsTr("TO")
+                                color: main.secondaryText
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
+                            }
+                            Label {
+                                text: Math.round(to.value).toString()
+                                color: main.primaryText
+                                font.pixelSize: 22
+                                font.weight: Font.DemiBold
+                            }
+                            Slider {
+                                id: to
+                                Layout.fillWidth: true
+                                from: 2
+                                to: 36
+                                value: 36
+                                stepSize: 1
+                                onValueChanged: backend.input_changed(input.text, Math.round(from.value), Math.round(to.value))
+                            }
+                        }
+                    }
+                }
+            }
+
+            Frame {
+                Layout.fillWidth: true
+                padding: 16
+                background: Rectangle {
+                    radius: 18
+                    color: main.cardColor
+                    border.width: 1
+                    border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                }
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 9
+                    Label {
+                        text: qsTr("INPUT")
+                        color: main.secondaryText
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 1.2
+                    }
+                    TextField {
+                        id: input
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("Type a number")
+                        font.family: "Monospace"
+                        font.pixelSize: 20
+                        selectByMouse: true
+                        focus: true
+                        color: main.primaryText
+                        onTextChanged: {
+                            var sanitized = input.text.toUpperCase().replace(/[^A-Z0-9.]/g, "")
+                            if (input.text !== sanitized)
+                                input.text = sanitized
+                            backend.input_changed(input.text, Math.round(from.value), Math.round(to.value))
+                        }
+                        background: Rectangle {
+                            radius: 11
+                            color: main.darkMode ? "#141d2a" : "#f7f9fd"
+                            border.width: input.activeFocus ? 2 : 1
+                            border.color: input.activeFocus ? main.accent : (main.darkMode ? "#35445a" : "#dce3ee")
+                        }
+                    }
+                }
+            }
+
+            Frame {
+                Layout.fillWidth: true
+                padding: 16
+                background: Rectangle {
+                    radius: 18
+                    color: main.darkMode ? "#202c3e" : "#e9efff"
+                    border.width: 1
+                    border.color: main.darkMode ? "#2b394d" : "#dce6ff"
+                }
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 8
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            text: qsTr("RESULT")
+                            color: main.secondaryText
+                            font.pixelSize: 11
+                            font.weight: Font.DemiBold
+                            font.letterSpacing: 1.2
+                        }
+                        Item { Layout.fillWidth: true }
+                        Label {
+                            text: Math.round(from.value) + "  →  " + Math.round(to.value)
+                            color: main.accent
+                            font.pixelSize: 12
+                            font.weight: Font.DemiBold
+                        }
+                    }
+                    TextField {
+                        id: output
+                        Layout.fillWidth: true
+                        text: backend.result
+                        readOnly: true
+                        selectByMouse: true
+                        font.family: "Monospace"
+                        font.pixelSize: 22
+                        color: main.primaryText
+                        background: Rectangle { color: "transparent" }
+                    }
+                }
+            }
+
+            ButtonRow {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 42
+                darkMode: main.darkMode
+                text1: "↔  FLIP"
+                text2: "RESET"
+                text3: "CLEAR"
+                text4: "⌫"
+                color1: main.darkMode ? "#315a9f" : "#315fe8"
+                colorText1: "#ffffff"
+                color2: main.darkMode ? "#344258" : "#e3eaf7"
+                color3: main.darkMode ? "#344258" : "#e3eaf7"
+                color4: main.darkMode ? "#344258" : "#e3eaf7"
+                enable5: false
+                enable6: false
+                onButtonPressed: (text) => {
+                    if (text.includes("FLIP")) {
+                        var oldFrom = from.value
+                        var oldTo = to.value
+                        var outputText = output.text
+                        to.value = oldFrom
+                        from.value = oldTo
+                        if (outputText !== "Output")
+                            input.text = outputText
+                    } else if (text === "RESET") {
+                        input.text = ""
+                        from.value = 10
+                        to.value = 36
+                    } else if (text === "CLEAR") {
+                        input.text = ""
+                    } else {
+                        input.text = input.text.slice(0, -1)
+                    }
+                }
+            }
+
+            Frame {
+                Layout.fillWidth: true
+                padding: 12
+                background: Rectangle {
+                    radius: 18
+                    color: main.cardColor
+                    border.width: 1
+                    border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
+                }
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 7
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            text: qsTr("KEYPAD")
+                            color: main.secondaryText
+                            font.pixelSize: 11
+                            font.weight: Font.DemiBold
+                            font.letterSpacing: 1.2
+                        }
+                        Item { Layout.fillWidth: true }
+                        Label {
+                            text: qsTr("Digits available up to base %1").arg(Math.round(from.value))
+                            color: main.secondaryText
+                            font.pixelSize: 11
+                        }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "V"; text2: "W"; text3: "X"; text4: "Y"; text5: "Z"; text6: "."
+                        enable1: from.value >= 32; enable2: from.value >= 33; enable3: from.value >= 34
+                        enable4: from.value >= 35; enable5: from.value >= 36; enable6: true
+                        color6: main.darkMode ? "#176b70" : "#c9f1ef"
+                        colorText6: main.darkMode ? "#e6fffb" : "#075e61"
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "P"; text2: "Q"; text3: "R"; text4: "S"; text5: "T"; text6: "U"
+                        enable1: from.value >= 26; enable2: from.value >= 27; enable3: from.value >= 28
+                        enable4: from.value >= 29; enable5: from.value >= 30; enable6: from.value >= 31
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "J"; text2: "K"; text3: "L"; text4: "M"; text5: "N"; text6: "O"
+                        enable1: from.value >= 20; enable2: from.value >= 21; enable3: from.value >= 22
+                        enable4: from.value >= 23; enable5: from.value >= 24; enable6: from.value >= 25
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "D"; text2: "E"; text3: "F"; text4: "G"; text5: "H"; text6: "I"
+                        enable1: from.value >= 14; enable2: from.value >= 15; enable3: from.value >= 16
+                        enable4: from.value >= 17; enable5: from.value >= 18; enable6: from.value >= 19
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "7"; text2: "8"; text3: "9"; text4: "A"; text5: "B"; text6: "C"
+                        enable1: from.value >= 8; enable2: from.value >= 9; enable3: from.value >= 10
+                        enable4: from.value >= 11; enable5: from.value >= 12; enable6: from.value >= 13
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "1"; text2: "2"; text3: "3"; text4: "4"; text5: "5"; text6: "6"
+                        enable1: from.value >= 2; enable2: from.value >= 3; enable3: from.value >= 4
+                        enable4: from.value >= 5; enable5: from.value >= 6; enable6: from.value >= 7
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                    ButtonRow {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 42
+                        darkMode: main.darkMode
+                        text1: "0"
+                        enable2: false; enable3: false; enable4: false; enable5: false; enable6: false
+                        onButtonPressed: (text) => { input.text += text }
+                    }
+                }
+            }
+
+            Label {
+                Layout.fillWidth: true
+                Layout.bottomMargin: 4
+                horizontalAlignment: Text.AlignHCenter
+                text: qsTr("Made for curious number people")
+                color: main.secondaryText
+                font.pixelSize: 11
+            }
         }
     }
 }
