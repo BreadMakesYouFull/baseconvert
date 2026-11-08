@@ -17,6 +17,57 @@ ApplicationWindow {
     property int cardPadding: compact ? 9 : 14
     property int sectionSpacing: compact ? 7 : 11
 
+    property real barCellHeight: 2.2
+
+    // Convert the result string into individual digit values.
+    property var visualDigits: {
+        var result = []
+        var repeating = false
+
+        for (var i = 0; i < output.text.length; i++) {
+            var character = output.text[i]
+
+            if (character === "[") {
+                repeating = true
+                continue
+            }
+            if (character === "]") {
+                repeating = false
+                continue
+            }
+
+            if (character === ".") {
+                result.push({
+                    character: ".",
+                    point: true
+                })
+                continue
+            }
+
+            var value = character >= "0" && character <= "9"
+                    ? Number(character)
+                    : character.charCodeAt(0) - 55
+
+            if (value >= 0 && value < 36) {
+                result.push({
+                    character: character,
+                    value: value,
+                    repeating: repeating,
+                    point: false
+                })
+            }
+        }
+        return result
+    }
+
+    property int maxVisualDigit: {
+        var maximum = 0
+        for (var i = 0; i < visualDigits.length; i++) {
+            maximum = Math.max(maximum, visualDigits[i].value || 0)
+        }
+        return maximum
+    }
+
     // Calculator-inspired casing, warm keycaps, and a high-contrast LCD.
     property color pageColor: darkMode ? "#172321" : "#d8ded6"
     property color cardColor: darkMode ? "#2b3935" : "#c3cbc3"
@@ -65,10 +116,65 @@ ApplicationWindow {
                     font.family: "Monospace"
                     font.pixelSize: main.compact ? 19 : 22
                     font.weight: Font.Black
-                    font.letterSpacing: 1.2
+		    font.letterSpacing: 1.2
                 }
             }
-            Item { Layout.fillWidth: true }
+
+
+		// Magnitude visualization.
+		Item {
+		    visible: input.text.length > 0  // Hide if no input
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
+                    Layout.minimumHeight: 10
+                    clip: true
+
+                    Flickable {
+                        anchors.fill: parent
+                        contentWidth: digitRow.width
+                        contentHeight: height
+                        clip: true
+                        boundsBehavior: Flickable.StopAtBounds
+
+                        Row {
+                            id: digitRow
+                            anchors.bottom: parent.bottom
+                            height: parent.height
+                            spacing: 3
+
+                            Repeater {
+                                model: main.visualDigits
+
+                                delegate: Item {
+                                    required property var modelData
+				    width: modelData.point ? 10 : 8
+                                    height: digitRow.height
+
+                                    Rectangle {
+                                        visible: !modelData.point
+                                        anchors.bottom: parent.bottom
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        width: parent.width
+                                        height: main.maxVisualDigit > 0
+                                            ? parent.height * modelData.value
+                                                / main.maxVisualDigit
+                                            : 0
+                                        radius: 1
+                                        color: modelData.repeating
+                                            ? main.orange
+                                            : main.accent
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+		
+		Item {
+                    visible: input.text.length == 0  // Hide if no input
+                    Layout.fillWidth: true
+		}
+
             ToolButton {
                 id: themeToggle
                 text: main.darkMode ? "☀" : "☾"
@@ -289,6 +395,10 @@ ApplicationWindow {
                         border.color: main.darkMode ? "#53645b" : "#78877d"
                     }
                 }
+
+
+
+
             }
         }
 
