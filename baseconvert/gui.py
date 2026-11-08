@@ -15,7 +15,7 @@ class Backend(QObject):
     updateResult = Signal()
     themeChanged = Signal()
 
-    def __init__(self, theme: str = "system", parent: QObject | None = None) -> None:
+    def __init__(self, theme: str = "dark", parent: QObject | None = None) -> None:
         super().__init__(parent)
         if theme not in {"system", "light", "dark"}:
             raise ValueError("theme must be 'system', 'light', or 'dark'")
@@ -45,14 +45,10 @@ class Backend(QObject):
         if self._theme == "light":
             return False
         app = QGuiApplication.instance()
-        return bool(
-            app
-            and app.styleHints().colorScheme() == Qt.ColorScheme.Dark
-        )
+        return bool(app and app.styleHints().colorScheme() == Qt.ColorScheme.Dark)
 
     @Slot()
     def toggle_theme(self) -> None:
-        # Toggling from system mode pins the opposite of the currently active mode.
         self._theme = "light" if self.darkMode else "dark"
         self.themeChanged.emit()
 
@@ -67,12 +63,11 @@ def main(theme: str | None = None, argv: Sequence[str] | None = None) -> None:
         parser.add_argument(
             "--theme",
             choices=("system", "light", "dark"),
-            default="system",
-            help="GUI color theme (default: follow system preference).",
+            default="dark",
+            help="GUI color theme (default: dark).",
         )
         theme = parser.parse_args(argv).theme
 
-    # Do not let the already-parsed --theme option reach Qt's argument parser.
     sys.argv = [sys.argv[0]]
     app = QGuiApplication(sys.argv)
     backend = Backend(theme)

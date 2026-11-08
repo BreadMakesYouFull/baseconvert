@@ -43,7 +43,7 @@ def test_cli_launches_gui_with_selected_theme(monkeypatch):
     assert launched == [{"theme": "dark"}]
 
 
-def test_cli_theme_defaults_to_system(monkeypatch):
+def test_cli_theme_defaults_to_dark(monkeypatch):
     class TTYInput:
         def isatty(self):
             return True
@@ -57,4 +57,4 @@ def test_cli_theme_defaults_to_system(monkeypatch):
     )
 
     assert main([]) is None
-    assert launched == [{"theme": "system"}]
+    assert launched == [{"theme": "dark"}]

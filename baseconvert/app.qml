@@ -12,11 +12,11 @@ ApplicationWindow {
     title: qsTr("Baseconvert")
 
     property bool darkMode: backend.darkMode
-    property bool compact: width < 390 || height < 540
-    property int pageMargin: width < 370 ? 9 : 16
-    property int cardPadding: compact ? 10 : 16
-    property int sectionSpacing: compact ? 8 : 12
-    property int keyHeight: Math.max(28, Math.min(42, Math.floor((height - 300) / 8)))
+    property bool compact: width < 390 || height < 520
+    property int pageMargin: width < 370 ? 8 : 14
+    property int cardPadding: compact ? 9 : 14
+    property int sectionSpacing: compact ? 7 : 11
+    property int keyHeight: Math.max(20, Math.min(42, Math.floor((keypadPanel.height - 76) / 4)))
     property color pageColor: darkMode ? "#111827" : "#f3f6fb"
     property color cardColor: darkMode ? "#1c2534" : "#ffffff"
     property color primaryText: darkMode ? "#f1f5f9" : "#172033"
@@ -37,13 +37,10 @@ ApplicationWindow {
     font.pixelSize: compact ? 13 : 14
 
     background: Rectangle {
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: main.darkMode ? "#101827" : "#edf3ff" }
-            GradientStop { position: 1.0; color: main.pageColor }
-        }
+        color: main.pageColor
     }
 
-    // Keep the keypad and primary actions pinned while the content above can scroll.
+    // Keep the keypad fixed in view; only the compact conversion area scrolls.
     ScrollView {
         id: scroll
         anchors.top: parent.top
@@ -51,25 +48,25 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.bottom: keypadPanel.top
         anchors.margins: main.pageMargin
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 7
         clip: true
         contentWidth: availableWidth
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
             id: page
-            x: Math.max(0, (scroll.availableWidth - width) / 2)
-            width: Math.min(scroll.availableWidth, 620)
+            width: scroll.availableWidth
             spacing: main.sectionSpacing
 
             RowLayout {
+                visible: !main.compact
                 Layout.fillWidth: true
                 ColumnLayout {
                     spacing: 1
                     Label {
                         text: qsTr("Baseconvert")
                         color: main.primaryText
-                        font.pixelSize: main.compact ? 20 : 24
+                        font.pixelSize: 23
                         font.weight: Font.DemiBold
                     }
                     Label {
@@ -80,19 +77,12 @@ ApplicationWindow {
                 }
                 Item { Layout.fillWidth: true }
                 ToolButton {
-                    id: themeToggle
                     text: main.darkMode ? "☀" : "☾"
                     font.pixelSize: 20
                     Accessible.name: main.darkMode ? qsTr("Switch to light mode") : qsTr("Switch to dark mode")
                     ToolTip.visible: hovered
                     ToolTip.text: Accessible.name
                     onClicked: backend.toggle_theme()
-                    background: Rectangle {
-                        radius: 12
-                        color: themeToggle.down
-                            ? (main.darkMode ? "#334155" : "#dce7ff")
-                            : (main.darkMode ? "#263449" : "#e4ecff")
-                    }
                 }
             }
 
@@ -100,23 +90,24 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 padding: main.cardPadding
                 background: Rectangle {
-                    radius: 16
+                    radius: 15
                     color: main.cardColor
                     border.width: 1
                     border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
                 }
                 ColumnLayout {
-                    spacing: 6
+                    anchors.fill: parent
+                    spacing: 4
                     Label {
                         text: qsTr("BASES")
                         color: main.secondaryText
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
-                        font.letterSpacing: 1.1
+                        font.letterSpacing: 1
                     }
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 10
+                        spacing: 12
                         ColumnLayout {
                             Layout.fillWidth: true
                             Layout.minimumWidth: 0
@@ -127,7 +118,7 @@ ApplicationWindow {
                                 Label {
                                     text: Math.round(from.value).toString()
                                     color: main.primaryText
-                                    font.pixelSize: 18
+                                    font.pixelSize: 17
                                     font.weight: Font.DemiBold
                                 }
                             }
@@ -144,7 +135,7 @@ ApplicationWindow {
                         }
                         Rectangle {
                             Layout.preferredWidth: 1
-                            Layout.preferredHeight: 44
+                            Layout.preferredHeight: 40
                             color: main.darkMode ? "#344258" : "#e5eaf2"
                         }
                         ColumnLayout {
@@ -157,7 +148,7 @@ ApplicationWindow {
                                 Label {
                                     text: Math.round(to.value).toString()
                                     color: main.primaryText
-                                    font.pixelSize: 18
+                                    font.pixelSize: 17
                                     font.weight: Font.DemiBold
                                 }
                             }
@@ -180,28 +171,30 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 padding: main.cardPadding
                 background: Rectangle {
-                    radius: 16
+                    radius: 15
                     color: main.cardColor
                     border.width: 1
                     border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
                 }
                 ColumnLayout {
-                    spacing: 5
+                    anchors.fill: parent
+                    spacing: 4
                     Label {
                         text: qsTr("INPUT · BASE %1").arg(Math.round(from.value))
                         color: main.secondaryText
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
-                        font.letterSpacing: 1.1
+                        font.letterSpacing: 1
                     }
                     TextField {
                         id: input
                         Layout.fillWidth: true
                         Layout.minimumWidth: 0
-                        implicitHeight: main.compact ? 42 : 48
+                        implicitHeight: main.compact ? 38 : 44
                         placeholderText: qsTr("Type a number")
+                        placeholderTextColor: main.darkMode ? "#8392a8" : "#7b8798"
                         font.family: "Monospace"
-                        font.pixelSize: main.compact ? 18 : 20
+                        font.pixelSize: main.compact ? 17 : 19
                         selectByMouse: true
                         focus: true
                         color: main.primaryText
@@ -212,7 +205,7 @@ ApplicationWindow {
                             backend.input_changed(input.text, Math.round(from.value), Math.round(to.value))
                         }
                         background: Rectangle {
-                            radius: 10
+                            radius: 9
                             color: main.darkMode ? "#141d2a" : "#f7f9fd"
                             border.width: input.activeFocus ? 2 : 1
                             border.color: input.activeFocus ? main.accent : (main.darkMode ? "#35445a" : "#dce3ee")
@@ -225,7 +218,7 @@ ApplicationWindow {
                             color: main.secondaryText
                             font.pixelSize: 10
                             font.weight: Font.DemiBold
-                            font.letterSpacing: 1.1
+                            font.letterSpacing: 1
                         }
                         Item { Layout.fillWidth: true }
                         Label { text: "→"; color: main.accent; font.pixelSize: 13 }
@@ -234,12 +227,12 @@ ApplicationWindow {
                         id: output
                         Layout.fillWidth: true
                         Layout.minimumWidth: 0
-                        implicitHeight: main.compact ? 38 : 42
+                        implicitHeight: main.compact ? 36 : 40
                         text: backend.result
                         readOnly: true
                         selectByMouse: true
                         font.family: "Monospace"
-                        font.pixelSize: main.compact ? 18 : 21
+                        font.pixelSize: main.compact ? 17 : 20
                         color: main.primaryText
                         background: Rectangle {
                             radius: 9
@@ -257,9 +250,10 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: main.pageMargin
-        padding: main.compact ? 7 : 10
+        height: Math.min(Math.max(155, main.height * 0.48), main.height - 130)
+        padding: main.compact ? 6 : 9
         background: Rectangle {
-            radius: 16
+            radius: 15
             color: main.cardColor
             border.width: 1
             border.color: main.darkMode ? "#2b394d" : "#e4eaf3"
@@ -267,16 +261,17 @@ ApplicationWindow {
 
         ColumnLayout {
             anchors.fill: parent
-            spacing: main.compact ? 5 : 8
+            spacing: main.compact ? 3 : 6
 
             RowLayout {
                 Layout.fillWidth: true
+                Layout.preferredHeight: 20
                 Label {
                     text: qsTr("KEYPAD")
                     color: main.secondaryText
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
-                    font.letterSpacing: 1.1
+                    font.letterSpacing: 1
                 }
                 Item { Layout.fillWidth: true }
                 Label {
@@ -296,9 +291,10 @@ ApplicationWindow {
             GridLayout {
                 id: keypadGrid
                 Layout.fillWidth: true
-                columns: 8
-                rowSpacing: main.compact ? 3 : 5
-                columnSpacing: main.compact ? 3 : 5
+                Layout.fillHeight: true
+                columns: 10
+                rowSpacing: main.compact ? 2 : 4
+                columnSpacing: main.compact ? 2 : 4
 
                 Repeater {
                     model: 37
@@ -307,15 +303,17 @@ ApplicationWindow {
                         property bool pointKey: index === 36
                         property int digitValue: index
                         Layout.fillWidth: true
-                        Layout.preferredHeight: main.keyHeight
-                        visible: pointKey || digitValue < Math.round(from.value)
+                        Layout.fillHeight: true
+                        Layout.minimumWidth: 0
+                        Layout.minimumHeight: 0
+                        enabled: pointKey || digitValue < Math.round(from.value)
                         text: pointKey ? "." : (digitValue < 10 ? digitValue.toString() : String.fromCharCode(55 + digitValue))
                         font.family: pointKey ? "Sans Serif" : "Monospace"
-                        font.pixelSize: pointKey ? main.keyHeight * 0.7 : Math.min(16, main.keyHeight * 0.48)
+                        font.pixelSize: pointKey ? Math.min(22, main.keyHeight * 0.78) : Math.min(16, main.keyHeight * 0.48)
                         font.weight: pointKey ? Font.Black : Font.DemiBold
                         Accessible.name: pointKey ? qsTr("Radix point") : text
                         palette.button: pointKey
-                            ? (main.darkMode ? "#0d7770" : "#b9f1e7")
+                            ? (main.darkMode ? "#087f75" : "#a5eee1")
                             : (main.darkMode ? "#29384d" : "#f0f3f9")
                         palette.buttonText: pointKey
                             ? (main.darkMode ? "#ffffff" : "#064f4b")
@@ -327,7 +325,7 @@ ApplicationWindow {
 
             ButtonRow {
                 Layout.fillWidth: true
-                Layout.preferredHeight: main.keyHeight + 4
+                Layout.preferredHeight: main.compact ? 32 : 38
                 darkMode: main.darkMode
                 text1: "↔ FLIP"
                 text2: "RESET"
