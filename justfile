@@ -22,7 +22,7 @@ install-gui: venv
     {{venv_python}} -m pip install -e '.[gui]'
 
 # Launch the GUI, installing its dependencies only when needed
-launch: venv
+launch:
     if [[ ! -x .venv/bin/baseconvert ]] || ! {{venv_python}} -c 'import PySide6.QtQml' >/dev/null 2>&1; then \
         just install-gui; \
     fi
