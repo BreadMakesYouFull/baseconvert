@@ -339,7 +339,9 @@ ApplicationWindow {
                             Layout.minimumHeight: 0
                             text: pointKey ? "." : (digitValue < 10 ? digitValue.toString() : String.fromCharCode(55 + digitValue))
                             font.family: "Monospace"
-                            font.pixelSize: pointKey ? Math.min(22, keypadGrid.height / 5 * 0.78) : Math.min(16, keypadGrid.height / 5 * 0.48)
+			    //font.pixelSize: pointKey ? Math.min(22, keypadGrid.height / 5 * 0.78) : Math.min(16, keypadGrid.height / 5 * 0.48)
+			    //font.pixelSize: pointKey ? 17 : 13
+			    font.pixelSize: pointKey ? Math.min(22, main.height / 40) * 1.5: Math.min(16, main.height / 55) * 1.5
                             font.weight: Font.Black
                             Accessible.name: pointKey ? qsTr("Radix point") : text
                             palette.button: pointKey ? (main.darkMode ? "#176c61" : "#a5eee1") : main.keyColor
