@@ -1,8 +1,8 @@
-import pkg_resources
 import re
 import sys
+from importlib.resources import files
 
-from PySide6.QtCore import QObject, Slot, Signal, Property
+from PySide6.QtCore import QObject, Property, QUrl, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -23,7 +23,7 @@ class Backend(QObject):
         if re.match("^[0-9A-Z]*[.]?[0-9A-Z]*$", value):
             try:
                 self._result = base(value, base_from, base_to, string=True, exact=True)
-            except:
+            except ValueError:
                 self._result = self._default
         else:
             self._result = self._default
@@ -39,7 +39,8 @@ def main():
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("backend", backend)
-    engine.load(pkg_resources.resource_filename(__name__, "app.qml"))
+    qml_path = files(__package__).joinpath("app.qml")
+    engine.load(QUrl.fromLocalFile(str(qml_path)))
     if not engine.rootObjects():
         sys.exit(-1)
     exit_code = app.exec()
