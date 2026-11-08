@@ -65,10 +65,13 @@ def test_invalid_types_and_ranges_cover_conversion_guards():
         fractional_base((".", 1), 10, 1)
     with pytest.raises(ValueError, match="max_depth"):
         base("0.5", 10, 2, max_depth=-1)
-    with pytest.raises(ValueError, match="invalid number"):
+    with pytest.raises(TypeError, match="not iterable"):
         base(None, 10)
     with pytest.raises(ValueError, match="invalid number"):
         base("", 10)
+    # Base-1 input accepts only unary digits; this exercises its invalid-digit path.
+    with pytest.raises(ValueError, match="invalid number"):
+        base("2", 1)
 
 
 def test_unary_integer_helpers_and_padding_without_radix_point():
@@ -129,7 +132,7 @@ def test_check_valid_syntax_and_base_edge_cases():
 
 
 def test_high_unicode_digit_and_miscellaneous_core_edges():
-    assert int_to_str_digit(62) == "{" 
+    assert int_to_str_digit(62) == "{"
     assert base("0.1", 3, 10, string=True, recurring=False, max_depth=0) == (
         "0." + "3" * MAX_DEPTH
     )
