@@ -91,6 +91,13 @@ ApplicationWindow {
                     border.color: main.darkMode ? "#53645b" : "#aab4aa"
                     border.width: 1
                 }
+                contentItem: Text {
+                    text: themeToggle.text
+                    font: themeToggle.font
+                    color: main.darkMode ? "#ffffff" : main.primaryText
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
             }
         }
 
