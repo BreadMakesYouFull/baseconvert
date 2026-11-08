@@ -265,8 +265,6 @@ def check_valid(number: Iterable[Digit], input_base: int = 10) -> bool:
             return False
         if number.index("[") + 1 == number.index("]"):
             return False
-    elif "]" in number:
-        return False
     for value in number:
         if value in (".", "[", "]"):
             continue
@@ -305,13 +303,20 @@ def _number_as_fraction(number: Any, input_base: int) -> Fraction:
     if number and number[0] in ("-", "+"):
         sign = -1 if number[0] == "-" else 1
         number = number[1:]
-    if not number or not check_valid(number, input_base):
+    if not number:
         raise ValueError("invalid number or digit for input base")
 
+    # Give base-1 fractional input its specific, useful error instead of the
+    # generic invalid-digit error produced by check_valid.
     if input_base == 1:
         if "." in number or "[" in number:
             raise ValueError("fractional numerals are not supported in base 1")
+        if not check_valid(number, input_base):
+            raise ValueError("invalid number or digit for input base")
         return Fraction(sign * sum(value == 1 for value in number), 1)
+
+    if not check_valid(number, input_base):
+        raise ValueError("invalid number or digit for input base")
 
     if "[" in number:
         cycle_start = number.index("[")
