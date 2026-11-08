@@ -273,18 +273,6 @@ ApplicationWindow {
                         font.letterSpacing: 1
                     }
                     Item { Layout.fillWidth: true }
-                    Label {
-                        text: qsTr(".")
-                        color: main.darkMode ? "#8ff0dc" : "#087e72"
-                        font.family: "Monospace"
-                        font.pixelSize: 12
-                        font.weight: Font.Bold
-                    }
-                    Label {
-                        text: qsTr("Radix point")
-                        color: main.secondaryText
-                        font.pixelSize: 10
-                    }
                 }
                 GridLayout {
                     id: keypadGrid
