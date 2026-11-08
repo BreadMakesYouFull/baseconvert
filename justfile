@@ -22,7 +22,7 @@ install-gui: venv
     {{venv_python}} -m pip install -e '.[gui]'
 
 # Launch the GUI (creates the environment and installs GUI dependencies if needed)
-gui: install-gui
+launch: install-gui
     .venv/bin/baseconvert
 
 # Install development and release tools into the virtual environment
