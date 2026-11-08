@@ -29,22 +29,28 @@ the launcher or PySide6 QML module is missing, then starts the GUI::
     cd baseconvert
     just launch
 
-Development
------------
+Development recipes
+-------------------
 
-Useful recipes from the repository root::
+Run these recipes from the repository root::
 
     just install       # editable install in .venv
     just install-gui   # editable install with GUI dependencies
-    just check         # lint, doctests, and check existing dist/* files
-    just build         # clean and build sdist and wheel
-    just check-dist    # build and validate distributions
-    just clean         # remove build artifacts and .venv
+    just install-dev   # install build, Black, and Twine
+    just format        # format Python source
+    just lint          # check formatting
+    just test          # run doctests
+    just check         # lint, doctests, then check files already in dist/
+    just build         # clean, install development tools, build sdist and wheel
+    just clean         # remove build artifacts AND .venv
 
-``just publish-test`` and ``just publish`` upload ``dist/*`` to TestPyPI and
-PyPI, respectively. Check the distributions and run ``just check-dist`` before
-publishing. The current publish recipes run ``just check`` but do not build
-distributions themselves.
+``just build`` first runs ``just clean``, which also deletes ``.venv``, and
+then installs the build tools again. ``just check`` does not build
+distributions; it runs ``twine check dist/*`` against files already in
+``dist/``. ``just publish-test`` and ``just publish`` run ``just check`` and
+upload the existing ``dist/*`` files to TestPyPI or PyPI, respectively. To
+build and validate distributions before publishing, run ``just build``
+followed by ``just check`` and review the files in ``dist/``.
 
 Python library
 --------------
