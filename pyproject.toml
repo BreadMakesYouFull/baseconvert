@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Convert numbers between bases."
 readme = "README.rst"
 requires-python = ">=3"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "squdle, BreadMakesYouFull" }]
 keywords = [
     "base", "bases", "radix", "numeral system", "number", "hex", "dec",
@@ -22,7 +22,6 @@ classifiers = [
     "Topic :: Education",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Intended Audience :: Education",
-    "License :: OSI Approved :: MIT License",
 ]
 
 [project.optional-dependencies]
