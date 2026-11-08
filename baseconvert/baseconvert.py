@@ -9,7 +9,7 @@ repeated remainders identify the exact start of a repetend.
 >>> base("0.3", 10, 2, string=True, exact=True)
 '0.0[1001]'
 >>> base("-FF.8", 16, 10, string=True, exact=True)
-'-4080.5'
+'-255.5'
 >>> base("0.1", 3, 10, string=True, exact=True)
 '0.[3]'
 >>> base("0.125", 10, 16, string=True, exact=True)
@@ -31,8 +31,16 @@ MAX_DEPTH = 128
 class BaseConverter:
     """Callable converter retaining the historical constructor and attributes."""
 
-    def __init__(self, input_base, output_base, max_depth=10, string=False,
-                 recurring=True, padding=0, exact=False):
+    def __init__(
+        self,
+        input_base,
+        output_base,
+        max_depth=10,
+        string=False,
+        recurring=True,
+        padding=0,
+        exact=False,
+    ):
         self.input_base = input_base
         self.output_base = output_base
         self.max_depth = 0 if exact else max_depth
@@ -41,8 +49,15 @@ class BaseConverter:
         self.padding = padding
 
     def __call__(self, number):
-        return base(number, self.input_base, self.output_base, self.max_depth,
-                    self.string, self.recurring, self.padding)
+        return base(
+            number,
+            self.input_base,
+            self.output_base,
+            self.max_depth,
+            self.string,
+            self.recurring,
+            self.padding,
+        )
 
 
 def represent_as_tuple(string):
@@ -71,7 +86,7 @@ def digit(decimal, digit, input_base=10):
     """Return the value at a zero-indexed position in a positive integer."""
     if decimal == 0:
         return 0
-    return (decimal // (input_base ** digit)) % input_base
+    return (decimal // (input_base**digit)) % input_base
 
 
 def digits(number, base=10):
@@ -188,11 +203,12 @@ def find_recurring(number, min_repeat=5):
     if "." not in number or min_repeat < 1:
         return number
     point = number.index(".")
-    fraction = number[point + 1:]
+    fraction = number[point + 1 :]
     for period in range(1, len(fraction) // (min_repeat + 1) + 1):
         repetitions = 1
         while (repetitions + 1) * period <= len(fraction) and all(
-            fraction[-period:] == fraction[-(repetitions + 1) * period:-repetitions * period]
+            fraction[-period:]
+            == fraction[-(repetitions + 1) * period : -repetitions * period]
         ):
             repetitions += 1
         if repetitions > min_repeat:
@@ -208,8 +224,8 @@ def expand_recurring(number, repeat=5):
         return number
     start = number.index("[")
     end = number.index("]", start)
-    pattern = number[start + 1:end]
-    return number[:start] + pattern * (repeat + 1) + number[end + 1:]
+    pattern = number[start + 1 : end]
+    return number[:start] + pattern * (repeat + 1) + number[end + 1 :]
 
 
 def check_valid(number, input_base=10):
@@ -245,8 +261,10 @@ def check_valid(number, input_base=10):
                 continue
             return False
     if input_base == 1:
-        return "." not in number and "[" not in number and all(
-            value in (0, 1) for value in number
+        return (
+            "." not in number
+            and "[" not in number
+            and all(value in (0, 1) for value in number)
         )
     return True
 
@@ -285,30 +303,31 @@ def _number_as_fraction(number, input_base):
         cycle_start = number.index("[")
         point = number.index(".")
         integer_digits = number[:point]
-        prefix = number[point + 1:cycle_start]
-        cycle = number[cycle_start + 1:-1]
+        prefix = number[point + 1 : cycle_start]
+        cycle = number[cycle_start + 1 : -1]
         prefix_length = len(prefix)
         cycle_length = len(cycle)
         result = Fraction(_digits_value(integer_digits, input_base), 1)
         if prefix:
-            result += Fraction(_digits_value(prefix, input_base), input_base ** prefix_length)
+            result += Fraction(
+                _digits_value(prefix, input_base), input_base**prefix_length
+            )
         result += Fraction(
             _digits_value(cycle, input_base),
-            input_base ** prefix_length * (input_base ** cycle_length - 1),
+            input_base**prefix_length * (input_base**cycle_length - 1),
         )
         return sign * result
 
     if "." in number:
         point = number.index(".")
         integer_digits = number[:point]
-        fractional_digits = number[point + 1:]
+        fractional_digits = number[point + 1 :]
     else:
         integer_digits = number
         fractional_digits = ()
     denominator = input_base ** len(fractional_digits)
-    numerator = (
-        _digits_value(integer_digits, input_base) * denominator
-        + _digits_value(fractional_digits, input_base)
+    numerator = _digits_value(integer_digits, input_base) * denominator + _digits_value(
+        fractional_digits, input_base
     )
     return sign * Fraction(numerator, denominator)
 
@@ -341,9 +360,7 @@ def _fraction_to_digits(value, output_base, max_depth, recurring):
             break
         if recurring:
             seen[remainder] = len(fractional_digits)
-        digit_value, remainder = divmod(
-            remainder * output_base, value.denominator
-        )
+        digit_value, remainder = divmod(remainder * output_base, value.denominator)
         fractional_digits.append(digit_value)
 
     if not fractional_digits:
@@ -353,7 +370,7 @@ def _fraction_to_digits(value, output_base, max_depth, recurring):
             tuple(fractional_digits[:repeat_at])
             + ("[",)
             + tuple(fractional_digits[repeat_at:])
-            + ("]",
+            + ("]",)
         )
     else:
         fractional = tuple(fractional_digits)
@@ -362,13 +379,21 @@ def _fraction_to_digits(value, output_base, max_depth, recurring):
 
 def _pad_signed(result, padding):
     sign = result[:1] if result[:1] in (("-",), ("+",)) else ()
-    body = result[len(sign):]
+    body = result[len(sign) :]
     point = body.index(".") if "." in body else len(body)
     return sign + ("0",) * max(0, padding - point) + body
 
 
-def base(number, input_base=10, output_base=10, max_depth=10, string=False,
-         recurring=True, padding=0, exact=False):
+def base(
+    number,
+    input_base=10,
+    output_base=10,
+    max_depth=10,
+    string=False,
+    recurring=True,
+    padding=0,
+    exact=False,
+):
     """Convert a rational numeral between positive integer bases.
 
     ``max_depth`` limits fractional digits. ``exact=True`` or ``max_depth=0``
@@ -384,7 +409,7 @@ def base(number, input_base=10, output_base=10, max_depth=10, string=False,
     result = _fraction_to_digits(value, output_base, max_depth, recurring)
     if string:
         sign = result[:1] if result[:1] in (("-",), ("+",)) else ()
-        body = represent_as_string(result[len(sign):])
+        body = represent_as_string(result[len(sign) :])
         point = body.index(".") if "." in body else len(body)
         return represent_as_string(sign) + "0" * max(0, padding - point) + body
     return _pad_signed(result, padding)
