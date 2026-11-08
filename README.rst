@@ -18,9 +18,12 @@ For the GUI, install the optional dependencies and launch the application::
     python -m pip install 'baseconvert[gui]'
     baseconvert
 
-To run from a source checkout, install `just <https://just.systems/>`_ and
-use the launch recipe. It creates ``.venv``, installs the GUI dependencies,
-and starts the application::
+Run from a source checkout
+--------------------------
+
+Install `just <https://just.systems/>`_, clone the repository, and run
+``just launch``. The recipe creates ``.venv`` and installs the GUI extra if
+the launcher or PySide6 QML module is missing, then starts the GUI::
 
     git clone https://github.com/BreadMakesYouFull/baseconvert.git
     cd baseconvert
@@ -33,14 +36,15 @@ Useful recipes from the repository root::
 
     just install       # editable install in .venv
     just install-gui   # editable install with GUI dependencies
-    just check         # lint and run doctests
-    just clean         # remove build artifacts
-    just build         # build sdist and wheel
+    just check         # lint, doctests, and check existing dist/* files
+    just build         # clean and build sdist and wheel
     just check-dist    # build and validate distributions
+    just clean         # remove build artifacts and .venv
 
-For a manual release, ``just publish-test`` uploads to TestPyPI and
-``just publish`` uploads to PyPI. Review and test the distributions before
-publishing a release.
+``just publish-test`` and ``just publish`` upload ``dist/*`` to TestPyPI and
+PyPI, respectively. Check the distributions and run ``just check-dist`` before
+publishing. The current publish recipes run ``just check`` but do not build
+distributions themselves.
 
 Python library
 --------------
@@ -55,10 +59,12 @@ decimal values without float representation concerns::
     base("4080.5", 10, 16, string=True)  # 'FF0.8'
     base("-0.1", 3, 10, string=True, exact=True)  # '-0.[3]'
 
-The command-line interface reads a number argument or standard input::
+The command-line interface reads a number argument or standard input. Bases
+are integers; ``-s`` prints a string, and ``--no-recurring`` disables
+recurring notation::
 
     python -m baseconvert -n 4080.5 -i 10 -o 16 -s
-    echo 4080.5 | python -m baseconvert -i 10 -o 16 -s
+    echo 0.1 | python -m baseconvert -i 3 -o 10 --no-recurring -s
 
 Digits, recurring fractions, and precision
 -----------------------------------------

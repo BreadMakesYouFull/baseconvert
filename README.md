@@ -23,7 +23,7 @@ baseconvert
 
 ## Run from a source checkout
 
-Install [`just`](https://just.systems/), clone the repository, and launch the GUI. `just launch` creates `.venv`, installs the package with GUI dependencies, and starts the app:
+Install [`just`](https://just.systems/), clone the repository, and run `just launch`. It creates `.venv` and installs the GUI extra if the launcher or PySide6 QML module is missing, then starts the GUI:
 
 ```sh
 git clone https://github.com/BreadMakesYouFull/baseconvert.git
@@ -31,18 +31,18 @@ cd baseconvert
 just launch
 ```
 
-Useful development recipes:
+Useful recipes from the repository root:
 
 ```sh
 just install       # editable install in .venv
 just install-gui   # editable install with GUI dependencies
-just check         # lint and run doctests
-just clean         # remove build artifacts
-just build         # build sdist and wheel
+just check         # lint, doctests, and check existing dist/* files
+just build         # clean and build sdist and wheel
 just check-dist    # build and validate distributions
+just clean         # remove build artifacts and .venv
 ```
 
-For a manual release, `just publish-test` uploads to TestPyPI and `just publish` uploads to PyPI. Review and test built distributions before publishing.
+`just publish-test` and `just publish` upload `dist/*` to TestPyPI and PyPI, respectively. Check the distributions and run `just check-dist` before publishing. The current publish recipes run `just check` but do not build distributions themselves.
 
 ## Python library
 
@@ -56,11 +56,11 @@ base("4080.5", 10, 16, string=True)  # 'FF0.8'
 base("-0.1", 3, 10, string=True, exact=True)  # '-0.[3]'
 ```
 
-The command-line interface reads a number argument or standard input:
+The command-line interface reads a number argument or standard input. Bases are integers; `-s` prints a string, and `--no-recurring` disables recurring notation:
 
 ```sh
 python -m baseconvert -n 4080.5 -i 10 -o 16 -s
-echo 4080.5 | python -m baseconvert -i 10 -o 16 -s
+echo 0.1 | python -m baseconvert -i 3 -o 10 --no-recurring -s
 ```
 
 ## Digits, recurring fractions, and precision
