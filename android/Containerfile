@@ -50,12 +50,12 @@ ARG PYSIDE_BRANCH
 RUN git clone --depth 1 --branch "${PYSIDE_BRANCH}" \
     https://code.qt.io/pyside/pyside-setup.git \
     /home/builder/pyside-setup \
-    && pip install \
+    && /home/builder/.venv/bin/pip install \
         -r /home/builder/pyside-setup/requirements.txt \
         -r /home/builder/pyside-setup/tools/cross_compile_android/requirements.txt
 
 # Host deployment CLI and dependencies
-RUN pip install \
+RUN /home/builder/.venv/bin/pip install \
     "PySide6==${PYSIDE_VERSION}" \
     jinja2 \
     pkginfo \
@@ -72,15 +72,18 @@ RUN mkdir -p /home/builder/android-wheels \
         -o "/home/builder/android-wheels/shiboken6-${PYSIDE_VERSION}-${PYSIDE_VERSION}-cp310-abi3-android_aarch64.whl"
 
 # Android SDK, NDK and Python downloads
-RUN python /home/builder/pyside-setup/tools/cross_compile_android/main.py \
+RUN /home/builder/.venv/bin/python /home/builder/pyside-setup/tools/cross_compile_android/main.py \
     --download-only \
     --skip-update \
     --auto-accept-license
 
 ENV ANDROIDSDK=/home/builder/.pyside6_android_deploy/android-sdk
 ENV ANDROIDNDK=/home/builder/.pyside6_android_deploy/android-ndk/android-ndk-r28c
+# Buildozer env vars
+ENV VIRTUAL_ENV=/home/builder/.venv
+ENV PATH="${JAVA_HOME}/bin:${VIRTUAL_ENV}/bin:${PATH}"
 
 WORKDIR /workspace
 
-ENTRYPOINT ["pyside6-android-deploy"]
+ENTRYPOINT ["/home/builder/.venv/bin/pyside6-android-deploy"]
 

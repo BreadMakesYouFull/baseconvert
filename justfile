@@ -106,8 +106,8 @@ android: android-image
         -v "$PWD/flatpak:/workspace/flatpak:Z" \
         baseconvert-android \
         --name baseconvert \
-        --wheel-pyside /opt/android-wheels/pyside6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
-        --wheel-shiboken /opt/android-wheels/shiboken6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
+        --wheel-pyside /home/builder/android-wheels/pyside6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
+        --wheel-shiboken /home/builder/android-wheels/shiboken6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
         --keep-deployment-files \
         --force \
         --verbose
