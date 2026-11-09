@@ -57,7 +57,9 @@ class Backend(QObject):
         return self._result
 
 
-def main(theme: str | None = None, argv: Sequence[str] | None = None) -> None:
+def main(
+    theme: str | None = None, mode: str | None = None, argv: Sequence[str] | None = None
+) -> None:
     if theme is None:
         parser = argparse.ArgumentParser(description="Launch baseconvert GUI.")
         parser.add_argument(
@@ -73,7 +75,10 @@ def main(theme: str | None = None, argv: Sequence[str] | None = None) -> None:
     backend = Backend(theme)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("backend", backend)
-    qml_path = files(__package__).joinpath("app.qml")
+    if mode == "android":
+        qml_path = files(__package__).joinpath("appAndroid.qml")
+    else:
+        qml_path = files(__package__).joinpath("app.qml")
     engine.load(QUrl.fromLocalFile(str(qml_path)))
     if not engine.rootObjects():
         sys.exit(-1)

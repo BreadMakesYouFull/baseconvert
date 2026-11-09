@@ -40,7 +40,7 @@ def test_cli_launches_gui_with_selected_theme(monkeypatch):
     )
 
     assert main(["--theme", "dark"]) is None
-    assert launched == [{"theme": "dark"}]
+    assert launched == [{"theme": "dark", "mode": "default"}]
 
 
 def test_cli_theme_defaults_to_dark(monkeypatch):
@@ -57,4 +57,4 @@ def test_cli_theme_defaults_to_dark(monkeypatch):
     )
 
     assert main([]) is None
-    assert launched == [{"theme": "dark"}]
+    assert launched == [{"theme": "dark", "mode": "default"}]

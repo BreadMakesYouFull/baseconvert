@@ -44,6 +44,12 @@ def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
         default="dark",
         help="GUI color theme (default: dark).",
     )
+    parser.add_argument(
+        "--mode",
+        choices=("default", "android"),
+        default="default",
+        help="GUI platform mode variants",
+    )
     recurring = parser.add_mutually_exclusive_group()
     recurring.add_argument(
         "-r",
@@ -80,7 +86,7 @@ def main(argv: Sequence[str] | None = None) -> str | DigitTuple | None:
 
     from .gui import main as gui_main
 
-    gui_main(theme=args.theme)
+    gui_main(theme=args.theme, mode=args.mode)
     return None
 
 
