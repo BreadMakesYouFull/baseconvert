@@ -299,7 +299,7 @@ ApplicationWindow {
                     Layout.minimumWidth: 0
                     Layout.fillHeight: true
                     Layout.minimumHeight: 42
-                    placeholderText: qsTr("Type a number")
+                    //placeholderText: qsTr("Type a number")
                     placeholderTextColor: "#76988c"
                     font.family: "Monospace"
                     font.pixelSize: main.compact ? 17 : 19

@@ -100,14 +100,14 @@ android-image:
 # Build the Android APK
 android: android-image
     podman run --rm \
-        -v "$PWD/android:/workspace" \
-        -v "$PWD/baseconvert:/workspace/baseconvert" \
-        -v "$PWD/flatpak:/workspace/flatpak" \
+        --userns=keep-id:uid=1000,gid=1000 \
+        -v "$PWD/android:/workspace:Z" \
+        -v "$PWD/baseconvert:/workspace/baseconvert:Z" \
+        -v "$PWD/flatpak:/workspace/flatpak:Z" \
         baseconvert-android \
         --name baseconvert \
-        --icon /workspace/flatpak/icon.svg \
-        --wheel-pyside /opt/android-wheels/pyside6.whl \
-        --wheel-shiboken /opt/android-wheels/shiboken6.whl \
+        --wheel-pyside /opt/android-wheels/pyside6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
+        --wheel-shiboken /opt/android-wheels/shiboken6-6.12.0-6.12.0-cp310-abi3-android_aarch64.whl \
         --keep-deployment-files \
         --force \
         --verbose
