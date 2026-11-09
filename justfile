@@ -102,8 +102,10 @@ android: android-image
     podman run --rm \
         -v "$PWD/android:/workspace" \ # Android only files
         -v "$PWD/baseconvert:/workspace/baseconvert" \ # Base convert python/qml files
+        -v "$PWD/flatpak:/workspace/flatpak" \ # Base convert icon
         baseconvert-android \
-        --name BaseConvert \
+        --name baseconvert \
+        --icon /workspace/flatpak/icon.svg \
         --wheel-pyside /opt/android-wheels/pyside6.whl \
         --wheel-shiboken /opt/android-wheels/shiboken6.whl \
         --keep-deployment-files \
