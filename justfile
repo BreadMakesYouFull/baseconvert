@@ -92,3 +92,20 @@ flatpak-run:
 
 # Build and launch flatpak from current tree
 flatpak-test: flatpak-build-dev flatpak-run
+
+# Build the Android toolchain image
+android-image:
+    podman build -f android/Containerfile -t baseconvert-android .
+
+# Build the Android APK
+android: android-image
+    podman run --rm \
+        -v "$PWD/android:/workspace" \ # Android only files
+        -v "$PWD/baseconvert:/workspace/baseconvert" \ # Base convert python/qml files
+        baseconvert-android \
+        --name BaseConvert \
+        --wheel-pyside /opt/android-wheels/pyside6.whl \
+        --wheel-shiboken /opt/android-wheels/shiboken6.whl \
+        --keep-deployment-files \
+        --force \
+        --verbose

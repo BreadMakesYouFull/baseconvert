@@ -1,0 +1,71 @@
+FROM debian:trixie-slim
+
+ARG PYSIDE_VERSION=6.12.0
+ARG PYSIDE_BRANCH=6.12
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:/opt/android-venv/bin:${PATH}"
+ENV PIP_NO_CACHE_DIR=1
+
+# System build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-dev \
+    python3-venv \
+    openjdk-21-jdk \
+    git \
+    curl \
+    wget \
+    build-essential \
+    cmake \
+    autoconf \
+    automake \
+    libtool \
+    pkg-config \
+    libffi-dev \
+    libssl-dev \
+    zlib1g-dev \
+    libncurses-dev \
+    zip \
+    unzip \
+    patchelf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Host Python environment
+RUN python3 -m venv /opt/android-venv \
+    && pip install --upgrade pip
+
+# Qt for Python deployment helper and its dependencies
+RUN git clone --depth 1 --branch "${PYSIDE_BRANCH}" \
+    https://code.qt.io/pyside/pyside-setup.git /opt/pyside-setup \
+    && pip install \
+        -r /opt/pyside-setup/requirements.txt \
+        -r /opt/pyside-setup/tools/cross_compile_android/requirements.txt
+
+# Host deployment CLI and additional dependencies
+RUN pip install \
+    "PySide6==${PYSIDE_VERSION}" \
+    jinja2 \
+    pkginfo \
+    tqdm \
+    "packaging==24.1"
+
+# Official Qt Android ARM64 wheels
+RUN mkdir -p /opt/android-wheels \
+    && curl -fL \
+        "https://download.qt.io/official_releases/QtForPython/pyside6/pyside6-${PYSIDE_VERSION}-${PYSIDE_VERSION}-cp310-abi3-android_aarch64.whl" \
+        -o /opt/android-wheels/pyside6.whl \
+    && curl -fL \
+        "https://download.qt.io/official_releases/QtForPython/shiboken6/shiboken6-${PYSIDE_VERSION}-${PYSIDE_VERSION}-cp310-abi3-android_aarch64.whl" \
+        -o /opt/android-wheels/shiboken6.whl
+
+# Android SDK, NDK and licence acceptance
+RUN python /opt/pyside-setup/tools/cross_compile_android/main.py \
+    --download-only \
+    --skip-update \
+    --auto-accept-license
+
+WORKDIR /workspace
+
+ENTRYPOINT ["pyside6-android-deploy"]
