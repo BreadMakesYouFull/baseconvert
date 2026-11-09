@@ -100,9 +100,9 @@ android-image:
 # Build the Android APK
 android: android-image
     podman run --rm \
-        -v "$PWD/android:/workspace" \ # Android only files
-        -v "$PWD/baseconvert:/workspace/baseconvert" \ # Base convert python/qml files
-        -v "$PWD/flatpak:/workspace/flatpak" \ # Base convert icon
+        -v "$PWD/android:/workspace" \
+        -v "$PWD/baseconvert:/workspace/baseconvert" \
+        -v "$PWD/flatpak:/workspace/flatpak" \
         baseconvert-android \
         --name baseconvert \
         --icon /workspace/flatpak/icon.svg \
